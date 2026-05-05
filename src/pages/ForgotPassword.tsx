@@ -1,5 +1,5 @@
 import React from "react";
-import Navbar from "@/components/ui/navbar";
+import Navbar from "@/components/layout/navbar";
 import { IoShieldCheckmarkOutline } from "react-icons/io5";
 import { TbShieldSearch } from "react-icons/tb";
 import { Card } from "@/components/ui/card";
@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import zxcvbn from "zxcvbn";
 import { IoIosArrowRoundForward } from "react-icons/io";
+import { useForm } from "react-hook-form";
 
 function ForgotPassword() {
   const [show, setShow] = useState(false);
@@ -24,6 +25,14 @@ function ForgotPassword() {
   };
 
   const strengthText = ["WEAK", "FAIR", "GOOD", "STRONG", "VERY STRONG"];
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const isMatch = password === confirmPassword;
+  const { register, handleSubmit } = useForm();
+  const passwordField = register("password");
+
+  const onSubmit = (data: unknown) => {
+    console.log("Form Data:", data);
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-[#FBF8FF]">
@@ -85,7 +94,7 @@ function ForgotPassword() {
                 Choose a password that you haven't used before for this account.
               </p>
 
-              <div className="w-full">
+              <form onSubmit={handleSubmit(onSubmit)} className="w-full">
                 <p className="font-inter text-[#757684] text-[12px] mb-1">
                   NEW PASSWORD
                 </p>
@@ -95,7 +104,11 @@ function ForgotPassword() {
                     type={show ? "text" : "password"}
                     className="h-[42px] pr-10"
                     value={password}
-                    onChange={handlePasswordChange}
+                    {...passwordField}
+                    onChange={(e) => {
+                      passwordField.onChange(e);
+                      handlePasswordChange(e);
+                    }}
                     placeholder="••••••••"
                   />
 
@@ -183,6 +196,8 @@ function ForgotPassword() {
                     <Input
                       type={showConfirm ? "text" : "password"}
                       className="h-[42px] pr-10"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
                       placeholder="••••••••"
                     />
                     <div className="absolute inset-y-0 right-3 flex items-center">
@@ -199,8 +214,13 @@ function ForgotPassword() {
                       )}
                     </div>
                   </div>
+                  {!isMatch && confirmPassword && (
+                    <p className="text-red-500 text-xs mt-1">
+                      password doesn't match{" "}
+                    </p>
+                  )}
                 </div>
-              </div>
+              </form>
               <div className="flex justify-center items-center bg-[#00288E] h-[56px]">
                 <button className="w-full h-[56px] bg-[#00288E] hover:bg-[#001f6b] text-white flex items-center justify-center gap-2 rounded-sm">
                   Set Password & Continue
