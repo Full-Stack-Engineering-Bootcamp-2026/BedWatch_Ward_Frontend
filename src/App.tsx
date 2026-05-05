@@ -1,20 +1,22 @@
-
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Dashboard from "./components/Admin/Dashboard";
+import ForgotPassword from "./pages/ForgotPassword";
+import Layout from "./components/layout/Layout";
 function App() {
- 
-
   return (
-      <BrowserRouter>
+    <BrowserRouter>
       <Routes>
-        <Route path="/"  element={<Login />} />
-          <Route path="/admin-dashboard"  element={<Dashboard />} />
-        {/* <Route path="/signup" element={<Signup />} /> */}
+        <Route path="/" element={<Login />} />
+
+        <Route element={<Layout />}>
+          <Route path="/admin-dashboard" element={<Dashboard />} />
+        </Route>
+
+        <Route path="ForgotPassword" element={<ForgotPassword />} />
       </Routes>
     </BrowserRouter>
-
-  )
+  );
 }
 
-export default App
+export default App;

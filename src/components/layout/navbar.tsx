@@ -14,18 +14,16 @@ export default function Navbar() {
         <span className="cursor-pointer hover:text-black"> staffing</span>
         <span className="cursor-pointer hover:text-black"> Resource Map</span>
         <span className="cursor-pointer hover:text-black"> Reports </span>
-          </nav>
-          
-          <div className="flex items-center gap-4">
-              <HelpCircle className="w-5 h-5 text-gray-500 cursor-pointer" />
-              
-              <Avatar className="w-8 h-8">
-                  <AvatarImage src="" />
-                  <AvatarFallback>U</AvatarFallback>
-                  
-              </Avatar>
-              
-          </div>
+      </nav>
+
+      <div className="flex items-center gap-4">
+        <HelpCircle className="w-5 h-5 text-gray-500 cursor-pointer" />
+
+        <Avatar className="w-8 h-8">
+          <AvatarImage src="" />
+          <AvatarFallback>U</AvatarFallback>
+        </Avatar>
+      </div>
     </header>
   );
 }
