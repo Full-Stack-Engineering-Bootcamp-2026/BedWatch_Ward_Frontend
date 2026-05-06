@@ -1,18 +1,82 @@
 import { Pie, PieChart, Cell } from "recharts";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
-const chartData = [
-  { name: "Occupied", value: 320, fill: "#F59E0B" },
-  { name: "Available", value: 45, fill: "#16A34A" },
-  { name: "Cleaning", value: 12, fill: "#1D4ED8" },
-];
-
-const total = chartData.reduce((sum, item) => sum + item.value, 0);
+type WardSummary = {
+  id: number;
+  name: string;
+  type: string;
+  capacity: number;
+  description: string;
+  availableBeds: number;
+  occupiedBeds: number;
+  cleaningBeds: number;
+};
 
 export function OccupancyChart() {
+  const [chartData, setChartData] = useState([
+    { name: "Occupied", value: 0, fill: "#F59E0B" },
+    { name: "Available", value: 0, fill: "#16A34A" },
+    { name: "Cleaning", value: 0, fill: "#1D4ED8" },
+  ]);
+
+  useEffect(() => {
+    const fetchWardSummary = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:3000/api/v1/wards/summary",
+        );
+        console.log(response.data);
+        
+
+        const wards: WardSummary[] = response.data.data;
+
+        const occupied = wards.reduce(
+          (sum, ward) => sum + ward.occupiedBeds,
+          0,
+        );
+
+        const available = wards.reduce(
+          (sum, ward) => sum + ward.availableBeds,
+          0,
+        );
+
+        const cleaning = wards.reduce(
+          (sum, ward) => sum + ward.cleaningBeds,
+          0,
+        );
+
+        setChartData([
+          {
+            name: "Occupied",
+            value: occupied,
+            fill: "#F59E0B",
+          },
+          {
+            name: "Available",
+            value: available,
+            fill: "#16A34A",
+          },
+          {
+            name: "Cleaning",
+            value: cleaning,
+            fill: "#1D4ED8",
+          },
+        ]);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchWardSummary();
+  }, []);
+  
+  
+
+  const total = chartData.reduce((sum, item) => sum + item.value, 0);
   return (
-    <Card className="w-full max-w-[453px] h-[380px] border-0 shadow-none ring-0 outline-none bg-white">
+    <Card className="w-full max-w-[453px] h-[380px] h-full border-0 shadow-none ring-0 outline-none bg-white">
       <CardHeader className="pb-2">
         <CardTitle className="text-base font-semibold">
           Live Occupancy Status
