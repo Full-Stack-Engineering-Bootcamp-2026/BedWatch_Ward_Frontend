@@ -13,6 +13,7 @@ import { OccupancyChart } from "./OccupancyChart";
 import ActionCard from "./ActionCard";
 import ReportCard from "./ReportCard";
 import AddWardModal from "./AddWardModal";
+import AddStaffModal from "./AddStaffModal";
 
 type WardSummary = {
   id: number;
@@ -130,11 +131,15 @@ function Dashboard() {
                 </div>
               </AddWardModal>
 
-              <ActionCard
-                title="Add Staff"
-                description="Provision clinician access"
-                icon={<FaUserPlus />}
-              />
+              <AddStaffModal>
+                <div>
+                  <ActionCard
+                    title="Add Staff"
+                    description="Provision clinician access"
+                    icon={<FaUserPlus />}
+                  />
+                </div>
+              </AddStaffModal>
             </div>
 
             <div className="h-full">
