@@ -2,19 +2,30 @@ import { SidebarProvider } from "../ui/sidebar";
 import AppSidebar from "./app-sidebar";
 import { Outlet } from "react-router-dom";
 import Navbar from "./navbar";
+import Footer from "./Footer";
 
 function Layout() {
   return (
     <SidebarProvider>
-      <div className="flex h-screen w-full">
-        <AppSidebar />
-
-        <div className="flex flex-col flex-1">
+      <div className="flex flex-col h-screen w-full">
+      
+            <div className="sticky top-0 z-50">
           <Navbar />
+        </div>
 
-          <main className="flex-1 overflow-auto p-6 bg-gray-50">
-            <Outlet />
-          </main>
+
+        <div className="flex flex-1 overflow-hidden ">
+          <AppSidebar />
+
+          <div className="flex flex-col flex-1 overflow-y-auto">
+
+
+            <main className=" bg-gray-50 pl-20  ">
+              <Outlet />
+            </main>
+
+            <Footer />
+          </div>
         </div>
       </div>
     </SidebarProvider>

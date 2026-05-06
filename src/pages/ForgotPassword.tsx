@@ -129,25 +129,26 @@ function ForgotPassword() {
 
                 <div className="mt-2">
                   <div className="flex justify-between text-[10px] text-gray-500">
-                    <span>PASSWORD STRENGTH</span>
-                    <span className="text-[#006780] font-medium">
+                    <span className="transition-all duration-1000">
+                      PASSWORD STRENGTH
+                    </span>
+                    <span className="text-[#006780] font-medium transition-all duration-1000">
                       {strengthText[score]}
                     </span>
                   </div>
 
-                  <div className="flex gap-1 mt-1">
+                  <div className="flex gap-1 mt-1 transition-all duration-1000">
                     {[0, 1, 2, 3].map((i) => (
                       <div
                         key={i}
-                        className={`h-1 flex-1 rounded ${
-                          i <= score ? "bg-[#006780]" : "bg-gray-200"
-                        }`}
+                        className={` h-1 flex-1 rounded transition-all duration-1000
+      ${i <= score ? "bg-[#006780]" : "bg-gray-200"}`}
                       />
                     ))}
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2 text-xs mt-3">
+                <div className="grid grid-cols-2 gap-2 text-xs mt-3 transition-all duration-1000">
                   <p
                     className={
                       password.length >= 12 ? "text-[#006780]" : "text-gray-400"
