@@ -45,7 +45,7 @@ export default function BedGrid({
         {filteredBeds.map((bed) => (
           <BedCard
             key={bed.id}
-            bed={bed}
+             bed={bed}
           />
         ))}
       </div>
