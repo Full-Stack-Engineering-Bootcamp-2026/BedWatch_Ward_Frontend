@@ -17,7 +17,6 @@ import { useNavigate } from "react-router-dom";
 
 type AddWardModalProps = {
   children: React.ReactNode;
-  fetchDashboardData: () => Promise<void>;
 };
 const wardSchema = z.object({
   name: z.string().min(2, "Ward name is required"),
@@ -31,7 +30,7 @@ const wardSchema = z.object({
 
 type WardFormData = z.infer<typeof wardSchema>;
 
-const AddWardModal = ({ children, fetchDashboardData }: AddWardModalProps) => {
+const AddWardModal = ({ children }: AddWardModalProps) => {
   const [open, setOpen] = useState(false);
 
   const navigate = useNavigate();
@@ -55,7 +54,6 @@ const AddWardModal = ({ children, fetchDashboardData }: AddWardModalProps) => {
       reset();
 
       setOpen(false);
-      await fetchDashboardData();
       window.location.reload();
     } catch (error: any) {
       console.error(error);
