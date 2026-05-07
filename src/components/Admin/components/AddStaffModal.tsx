@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 import { Label } from "@/components/ui/label";
+import { toast } from "react-toastify";
 
 const addStaffSchema = z.object({
   name: z.string().min(3, "Name must be at least 3 characters"),
@@ -97,7 +98,7 @@ function AddStaffModal({ children }: Props) {
         wardId: data.role === "STAFF" ? Number(data.wardId) : null,
       });
 
-      alert("Staff account created successfully");
+      toast.success("Staff account created successfully");
 
       reset();
 
@@ -105,7 +106,7 @@ function AddStaffModal({ children }: Props) {
     } catch (error) {
       console.error(error);
 
-      alert("Failed to create staff");
+      toast.error("Failed to create staff");
     }
   };
 
@@ -134,7 +135,7 @@ function AddStaffModal({ children }: Props) {
             </Label>
 
             <Input
-              placeholder="e.g. Dr. Julian Chase"
+              placeholder="staff or senior staff name"
               className="h-11"
               {...register("name")}
             />
@@ -151,7 +152,7 @@ function AddStaffModal({ children }: Props) {
 
             <Input
               type="email"
-              placeholder="doctor@hospital.com"
+              placeholder="abc@hospital.com"
               className="h-11"
               {...register("email")}
             />
