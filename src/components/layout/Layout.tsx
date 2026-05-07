@@ -20,7 +20,7 @@ function Layout() {
           <div className="flex flex-col flex-1 overflow-y-auto">
 
 
-            <main className=" bg-gray-50 pl-20  ">
+            <main className=" bg-gray-50   ">
               <Outlet />
             </main>
 
