@@ -7,13 +7,13 @@ import { MdPieChartOutline } from "react-icons/md";
 
 import axios from "axios";
 
-import Card from "./Card";
-import WardTable from "./WardTable";
-import { OccupancyChart } from "./OccupancyChart";
-import ActionCard from "./ActionCard";
-import ReportCard from "./ReportCard";
-import AddWardModal from "./AddWardModal";
-import AddStaffModal from "./AddStaffModal";
+import Card from "../components/Card";
+import WardTable from "../components/WardTable";
+import { OccupancyChart } from "../components/OccupancyChart";
+import ActionCard from "../components/ActionCard";
+import ReportCard from "../components/ReportCard";
+import AddWardModal from "../components/AddWardModal";
+import AddStaffModal from "../components/AddStaffModal";
 
 type WardSummary = {
   id: number;

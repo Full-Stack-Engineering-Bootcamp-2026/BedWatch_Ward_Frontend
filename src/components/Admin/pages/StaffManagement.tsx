@@ -13,8 +13,8 @@ import {
   PaginationItem,
   PaginationLink,
 } from "@/components/ui/pagination";
-import AddStaffModal from "./AddStaffModal";
-import Card from "./Card";
+import AddStaffModal from "../components/AddStaffModal";
+import Card from "../components/Card";
 
 const staffData = [
   {

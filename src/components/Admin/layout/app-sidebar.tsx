@@ -4,9 +4,10 @@ import { Button } from "@/components/ui/button";
 import { NavLink } from "react-router-dom";
 
 import { MdOutlineDashboard, MdOutlineBed } from "react-icons/md";
-import { HiUserGroup } from "react-icons/hi";
 import { LiaUserShieldSolid } from "react-icons/lia";
-import AddStaffModal from "../AddStaffModal";
+
+import AddStaffModal from "../components/AddStaffModal";
+import { FaBuildingShield } from "react-icons/fa6";
 
 type SidebarProps = {
   open: boolean;
@@ -25,9 +26,9 @@ const menu = [
     path: "/Wardview",
   },
   {
-    name: "Staffing",
-    icon: HiUserGroup,
-    path: "/staffing",
+    name: "Ward Control",
+    icon: FaBuildingShield,
+    path: "/wardcontrol",
   },
   {
     name: "System Admin",
