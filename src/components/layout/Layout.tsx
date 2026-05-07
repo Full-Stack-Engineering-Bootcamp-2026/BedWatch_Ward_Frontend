@@ -8,19 +8,15 @@ function Layout() {
   return (
     <SidebarProvider>
       <div className="flex flex-col h-screen w-full">
-      
-            <div className="sticky top-0 z-50">
+        <div className="sticky top-0 z-50">
           <Navbar />
         </div>
-
 
         <div className="flex flex-1 overflow-hidden ">
           <AppSidebar />
 
           <div className="flex flex-col flex-1 overflow-y-auto">
-
-
-            <main className=" bg-gray-50 pl-20  ">
+            <main className=" bg-gray-50 pl-8 ">
               <Outlet />
             </main>
 
