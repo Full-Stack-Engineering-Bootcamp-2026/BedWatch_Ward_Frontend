@@ -43,7 +43,7 @@ function DeleteWardModal({ ward, onDelete }: DeleteWardModalProps) {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="border-0 bg-[#F8F9FC] p-0 overflow-hidden sm:max-w-[500px]">
+      <DialogContent className="overflow-hidden border-0 bg-[#F8F9FC] p-0 sm:max-w-[500px]">
         <DialogHeader className="border-b bg-white px-6 py-5">
           <DialogTitle className="text-2xl font-bold text-red-600">
             Delete Ward

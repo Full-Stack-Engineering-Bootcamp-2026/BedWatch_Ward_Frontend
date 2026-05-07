@@ -25,21 +25,18 @@ type Ward = {
 
 type EditWardModalProps = {
   ward: Ward;
-  onSave: (updatedWard: Ward) => void;
+  onSave: (updatedWard: { id: number; capacity: number }) => void;
 };
 
 function EditWardModal({ ward, onSave }: EditWardModalProps) {
   const [open, setOpen] = useState(false);
 
-  const [name, setName] = useState(ward.name);
-
   const [beds, setBeds] = useState(ward.beds.toString());
 
   const handleSave = () => {
     onSave({
-      ...ward,
-      name,
-      beds: Number(beds),
+      id: ward.id,
+      capacity: Number(beds),
     });
 
     setOpen(false);
@@ -53,14 +50,14 @@ function EditWardModal({ ward, onSave }: EditWardModalProps) {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="border-0 bg-[#F8F9FC] p-0 overflow-hidden sm:max-w-[560px]">
+      <DialogContent className="overflow-hidden border-0 bg-[#F8F9FC] p-0 sm:max-w-[560px]">
         <DialogHeader className="border-b bg-white px-6 py-5">
           <DialogTitle className="text-3xl font-bold text-[#0F2E8A]">
             Edit Ward
           </DialogTitle>
 
           <DialogDescription className="mt-1 text-xs font-semibold uppercase tracking-[2px] text-gray-400">
-            Operational Configuration
+            Capacity Management
           </DialogDescription>
         </DialogHeader>
 
@@ -71,10 +68,9 @@ function EditWardModal({ ward, onSave }: EditWardModalProps) {
             </Label>
 
             <Input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="h-11"
-              placeholder="General Ward"
+              value={ward.name}
+              disabled
+              className="h-11 cursor-not-allowed bg-gray-100 text-gray-500"
             />
           </div>
 
@@ -94,8 +90,8 @@ function EditWardModal({ ward, onSave }: EditWardModalProps) {
 
           <div className="rounded-md border-l-4 border-blue-600 bg-blue-50 px-4 py-4">
             <p className="text-sm text-blue-700">
-              Changes made here will immediately update the ward management
-              dashboard and capacity tracking system.
+              Ward name cannot be modified after creation. Only bed capacity can
+              be updated.
             </p>
           </div>
 
