@@ -1,11 +1,15 @@
+import { PiNotepadLight } from "react-icons/pi";
+
 interface Props {
   bed: {
-    number: string;
+    bed_number: string;
     status: string;
     patient?: string;
+    admitted?: string;
     duration?: string;
-    diagnosis: string;
-    time: string;
+    priority?: string;
+    nurse?: string;
+    doctor?: string;
   };
 }
 
@@ -26,82 +30,88 @@ export default function BedCard({ bed }: Props) {
     }
   };
 
-  const getText = () => {
+  const getStatusStyle = () => {
     switch (bed.status) {
       case "AVAILABLE":
-        return "text-emerald-600";
+        return "bg-emerald-50 text-emerald-600";
 
       case "OCCUPIED":
-        return "text-red-500";
+        return "bg-red-50 text-red-500";
 
       case "CLEANING":
-        return "text-orange-500";
+        return "bg-orange-50 text-orange-500";
 
       default:
-        return "text-slate-500";
+        return "bg-slate-100 text-slate-500";
     }
   };
+  console.log(bed);
 
   return (
-    <div
-      className={`w-[336px] h-[240px] bg-white border-t-[4px] border-r border-b border-l ${getBorder()} rounded-sm p-2 flex flex-col justify-between shadow-sm`}
-    >
+      <div className={`w-[390px] bg-white border border-slate-200 border-t-[4px] ${getBorder()} rounded-md p-6 shadow-sm`}>
+          
       <div>
-        <div className="flex items-start justify-between">
-          <div>
-            <h2 className="text-2xl font-bold text-slate-800">
-              Bed {bed.number}
-            </h2>
+        <h2 className="text-4xl font-bold text-slate-800">
+          Bed {bed.bed_number}
+        </h2>
 
-            <p className={`text-xs font-bold mt-1 tracking-wide ${getText()}`}>
-              {bed.status}
-            </p>
-          </div>
+        <span
+          className={`inline-block mt-4 text-xs font-bold tracking-widest uppercase px-3 py-1 rounded-sm ${getStatusStyle()}`}
+        >
+          {bed.status}
+        </span>
+      </div>
 
-          {bed.duration && (
-            <span className="text-sm text-slate-400 font-medium">
-              {bed.duration}
-            </span>
-          )}
+      <div className="mt-10">
+        <p className="text-xs uppercase tracking-widest text-slate-400">
+          Patient Name
+        </p>
+
+        <h3 className="mt-2 text-2xl font-semibold text-slate-800">
+          {bed.patient || "No Patient"}
+        </h3>
+      </div>
+
+      <div className="mt-10 flex items-start justify-between">
+        <div>
+          <p className="text-xs uppercase tracking-widest text-slate-400">
+            Admitted
+          </p>
+
+          <p className="mt-2 text-xl text-slate-700 font-medium">
+            {bed.admitted || "--"}
+          </p>
         </div>
 
-        {/* Content */}
-        <div className="mt-6 space-y-4">
-          {bed.patient && (
-            <div>
-              <p className="text-[10px] uppercase tracking-widest text-slate-400">
-                Patient Name
-              </p>
+        <div className="text-right">
+          <p className="text-xs uppercase tracking-widest text-slate-400">
+            Stay Duration
+          </p>
 
-              <p className="font-semibold text-slate-700 mt-1">{bed.patient}</p>
-            </div>
-          )}
-
-          <div>
-            <p className="text-[10px] uppercase tracking-widest text-slate-400">
-              Details
-            </p>
-
-            <p className="text-sm text-slate-600 mt-1">{bed.diagnosis}</p>
-          </div>
+          <p className="mt-2 text-xl text-slate-700 font-medium">
+            {bed.duration || "--"}
+          </p>
         </div>
       </div>
 
-      {/* Footer */}
-      <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
-        <span className="text-xs text-slate-500">{bed.time}</span>
+      <div className="mt-10 pt-5 border-t border-slate-200 flex items-center justify-between">
+        <div className="flex items-center -space-x-2">
+          <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-700 border border-white">
+            RN
+          </div>
 
-        {bed.status === "AVAILABLE" && (
-          <button className="text-sm text-blue-700 font-semibold hover:text-blue-800">
-            Assign
-          </button>
-        )}
+          <div className="w-9 h-9 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold text-slate-700 border border-white">
+            MD
+          </div>
+        </div>
 
-        {bed.status === "OCCUPIED" && (
-          <button className="text-sm text-blue-700 font-semibold hover:text-blue-800">
-            View Chart
-          </button>
-        )}
+        <div className="flex items-center gap-2 text-slate-600 font-semibold">
+          <span>
+            <PiNotepadLight />
+          </span>
+
+          <span>{bed.priority || "medium Priority"}</span>
+        </div>
       </div>
     </div>
   );

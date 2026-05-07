@@ -11,7 +11,6 @@ export default function StaffDashboard() {
   const [beds, setBeds] = useState([]);
   const [wardName, setWardName] = useState("");
 
-  // Get id from Redux store
   const id = useSelector((state: RootState) => state.auth.user?.id);
 
   const getDashboardData = async () => {
@@ -25,10 +24,8 @@ export default function StaffDashboard() {
         },
       },
     );
-
     return response.data;
   };
-
   useEffect(() => {
     if (!id) return;
 
@@ -36,18 +33,16 @@ export default function StaffDashboard() {
       try {
         const data = await getDashboardData();
 
-        setBeds(data.beds);
-        setWardName(data.ward.name);
+        setBeds(data.data.beds);
+        setWardName(data.data.ward.name);
 
         console.log(data);
       } catch (error) {
         console.error(error);
       }
     };
-
     fetchDashboard();
   }, [id]);
-
   return (
     <div className="space-y-6 p-6 bg-[#f4f1f8] min-h-screen">
       <div className="flex items-start justify-between">
@@ -55,25 +50,22 @@ export default function StaffDashboard() {
           <p className="text-xs tracking-widest text-cyan-700 font-semibold uppercase">
             Central Operations
           </p>
-
           <h1 className="text-4xl font-bold text-slate-800 mt-2">
             {wardName} — Live Bed Status
           </h1>
         </div>
-
         <div className="flex gap-3">
           <button className="flex items-center gap-2 border border-slate-300 bg-white px-5 py-2 text-sm font-medium rounded-md">
             <GoDownload />
             Export Status
           </button>
-
           <button className="bg-[#00288E] text-white px-5 py-2 text-sm font-medium rounded-md">
             + Allocate Bed
           </button>
         </div>
       </div>
 
-      <SummaryCards />
+      <SummaryCards beds={beds} />
 
       <BedGrid beds={beds} />
     </div>

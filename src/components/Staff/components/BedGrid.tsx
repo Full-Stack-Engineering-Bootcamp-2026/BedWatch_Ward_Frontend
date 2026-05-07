@@ -4,12 +4,17 @@ import { useState } from "react";
 
 type Bed = {
   id: number;
-  number: string;
+  bed_number: string;
   status: string;
-  patient: string;
-  duration: string;
-  diagnosis: string;
-  time: string;
+  type: string;
+  floor: string;
+
+  patient?: {
+    name: string;
+    age: number;
+    diagnosis: string;
+    admittedAt: string;
+  };
 };
 
 type BedGridProps = {
