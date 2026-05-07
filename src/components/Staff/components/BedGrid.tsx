@@ -21,32 +21,19 @@ type BedGridProps = {
   beds: Bed[];
 };
 
-export default function BedGrid({
-  beds,
-}: BedGridProps) {
-  const [filter, setFilter] =
-    useState("ALL");
+export default function BedGrid({ beds }: BedGridProps) {
+  const [filter, setFilter] = useState("ALL");
 
   const filteredBeds =
-    filter === "ALL"
-      ? beds
-      : beds.filter(
-          (bed) => bed.status === filter
-        );
+    filter === "ALL" ? beds : beds.filter((bed) => bed.status === filter);
 
   return (
     <div className="space-y-4">
-      <FilterBar
-        filter={filter}
-        setFilter={setFilter}
-      />
+      <FilterBar filter={filter} setFilter={setFilter} />
 
       <div className="flex flex-wrap gap-2">
         {filteredBeds.map((bed) => (
-          <BedCard
-            key={bed.id}
-             bed={bed}
-          />
+          <BedCard key={bed.id} bed={bed} />
         ))}
       </div>
     </div>
