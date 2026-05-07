@@ -1,6 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { login } from "@/services/authService";
+import { useDispatch } from "react-redux";
+import { login as loginAction } from "../store/slices/authSlice";
+import type { AppDispatch } from "../store/store";
+
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,90 +18,107 @@ import { MdOutlineBed } from "react-icons/md";
 
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+
 import { GoShieldCheck } from "react-icons/go";
 import { MdLoop } from "react-icons/md";
-
 const loginSchema = z.object({
-  email: z.string().min(1, "email is required ").email("indvalid email"),
-  password: z
-    .string()
-    .min(6, "requires minimum 6 characters")
-    .regex(/[A-za-z]/, "must contain a letter ")
-    .regex(/[0-9]/, "must contain a  number")
-    .regex(/[@$!%*?&#]/, "must conatain atleast one special character "),
+  email: z.string().min(1, "Email is required").email("Invalid email"),
+
+  password: z.string().min(1, "Password is required"),
 });
 
+type LoginFormData = z.infer<typeof loginSchema>;
+
 export default function Login() {
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({ resolver: zodResolver(loginSchema) });
-
-  const onSubmit = async (data: any) => {
-    try {
-      console.log(data);
-      const res = await login(data);
-      localStorage.setItem("token", res.data.token);
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+  });
 
   const [showPassword, setShowPassword] = useState(false);
+
+  const onSubmit = async (data: LoginFormData) => {
+    try {
+      const res = await login(data);
+      console.log(res.data.data);
+
+      dispatch(
+        loginAction({
+          token: res.data.data.token,
+          user: res.data.data.user,
+        }),
+      );
+
+      toast.success(res.data.message || "Login Successful");
+
+      navigate("/admin-dashboard");
+    } catch (err: any) {
+      console.error(err);
+
+      toast.error(err?.response?.data?.message || "Login Failed");
+    }
+  };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-[#FBF8FF]">
       <div className="mb-6 text-center">
-        <MdOutlineBed className=" flex justify-center w-48 size-14 text-[#00288E]" />
+        <MdOutlineBed className="flex justify-center w-48 size-14 text-[#00288E]" />
+
         <h1 className="text-3xl font-bold text-[#00288E]">BEDWATCH</h1>
       </div>
 
-      <Card className="  flex flex-col justify-center w-full max-w-md  p-2 shadow-md border border-gray-300 h-[442px]">
-        <CardContent className=" p-6 space-y-4">
+      <Card className="flex flex-col justify-center w-full max-w-md p-2 shadow-md border border-gray-300 h-[442px]">
+        <CardContent className="p-6 space-y-4">
           <div className="pb-7">
-            <h2 className=" font-inter text-lg font-semibold">
+            <h2 className="font-inter text-lg font-semibold">
               Operational Login
             </h2>
-            <p className=" font-inter text-sm text-gray-500">
+
+            <p className="font-inter text-sm text-gray-500">
               Enter your credentials to access the facility dashboard.
             </p>
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
-              <Label className="font-inter ">Email Address</Label>
+              <Label className="font-inter">Email Address</Label>
+
               <div className="relative mt-1">
                 <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+
                 <Input
                   placeholder="clinician@hospital.org"
                   className="pl-10 h-[42px]"
                   {...register("email")}
                 />
-                {errors.email && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {errors.email.message}
-                  </p>
-                )}
               </div>
+
+              {errors.email && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.email.message}
+                </p>
+              )}
             </div>
 
             <div>
               <Label>Password</Label>
+
               <div className="relative mt-1">
                 <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+
                 <Input
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
                   className="pl-10 pr-10 h-[42px]"
                   {...register("password")}
                 />
-                {errors.password && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {errors.password.message}
-                  </p>
-                )}
+
                 {showPassword ? (
                   <EyeOff
                     onClick={() => setShowPassword(false)}
@@ -108,9 +131,15 @@ export default function Login() {
                   />
                 )}
               </div>
+
+              {errors.password && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.password.message}
+                </p>
+              )}
             </div>
 
-            <Button className="w-full text-white bg-[#1E40AF] hover:bg-[#1E40AF] ">
+            <Button className="w-full text-white bg-[#1E40AF] hover:bg-[#1E40AF]">
               Login →
             </Button>
           </form>
@@ -121,12 +150,13 @@ export default function Login() {
         </CardContent>
       </Card>
 
-      <div className="w-full max-w-md  flex justify-between p-2  mt-6 text-xs text-gray-500">
-        <span className=" flex  items-center gap-1">
+      <div className="w-full max-w-md flex justify-between p-2 mt-6 text-xs text-gray-500">
+        <span className="flex items-center gap-1">
           <GoShieldCheck />
           Secure Access
         </span>
-        <span className=" flex  items-center gap-1">
+
+        <span className="flex items-center gap-1">
           <MdLoop />
           Live Monitoring
         </span>
