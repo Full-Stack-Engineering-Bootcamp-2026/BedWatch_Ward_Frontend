@@ -20,10 +20,6 @@ function App() {
 
         <Route element={<AdminLayout />}>
           <Route path="/admin-dashboard" element={<Dashboard />} />
-          <Route path="/Systemadmin" element={<StaffManagement />} />
-          <Route path="/Wardview" element={<WardManagement />} />
-          <Route path="/admin-profile" element={<AdminProfile />} />
-          <Route path="/wardcontrol" element={<WardControl />} />
         </Route>
 
         <Route path="/sr-staff/dashboard" element={<SrStaffDashboard />} />
