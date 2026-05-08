@@ -9,12 +9,24 @@ import { useState } from "react";
 import zxcvbn from "zxcvbn";
 import { IoIosArrowRoundForward } from "react-icons/io";
 import { useForm } from "react-hook-form";
+import axios from "axios";
+import { SiNike } from "react-icons/si";
 
-function ForgotPassword() {
+import { toast } from "react-toastify";
+
+import { useSearchParams, useNavigate } from "react-router-dom";
+
+function ResetPassword() {
   const [show, setShow] = useState(false);
   const [password, setPassword] = useState("");
   const [score, setScore] = useState(0);
   const [showConfirm, setShowConfirm] = useState(false);
+
+  const navigate = useNavigate();
+
+  const [searchParams] = useSearchParams();
+
+  const token = searchParams.get("token");
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -30,13 +42,37 @@ function ForgotPassword() {
   const { register, handleSubmit } = useForm();
   const passwordField = register("password");
 
-  const onSubmit = (data: unknown) => {
-    console.log("Form Data:", data);
+  const onSubmit = async (data: any) => {
+    if (!isMatch) {
+      toast.error("Passwords do not match");
+
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/v1/authF/reset-password",
+        {
+          token,
+          password: data.password,
+        },
+      );
+
+      toast.success(response.data.message || "Password reset successful");
+
+      setTimeout(() => {
+        navigate("/");
+      }, 1500);
+    } catch (error: any) {
+      console.log("error : ", error);
+
+      toast.error(error?.response?.data?.message || "Something went wrong");
+    }
   };
 
   return (
     <div className="flex flex-col min-h-screen bg-[#FBF8FF]">
-      <Navbar />
+      {/* <Navbar /> */}
 
       <div className="flex flex-1">
         <div className="hidden md:flex flex-1 items-center justify-center px-12">
@@ -151,10 +187,12 @@ function ForgotPassword() {
                 <div className="grid grid-cols-2 gap-2 text-xs mt-3 transition-all duration-1000">
                   <p
                     className={
-                      password.length >= 12 ? "text-[#006780]" : "text-gray-400"
+                      password.length >= 7 ? "text-[#006780]" : "text-gray-400"
                     }
                   >
-                    ✔ At least 12 characters
+                    <div className="flex items-center gap-2">
+                      <SiNike className="size-5" /> Thala for a reason
+                    </div>
                   </p>
 
                   <p
@@ -164,7 +202,9 @@ function ForgotPassword() {
                         : "text-gray-400"
                     }
                   >
-                    ✔ One special character
+                    <div className="flex items-center gap-2">
+                      <SiNike className="size-5" /> One special character
+                    </div>
                   </p>
 
                   <p
@@ -174,7 +214,9 @@ function ForgotPassword() {
                         : "text-gray-400"
                     }
                   >
-                    ✔ One uppercase letter
+                    <div className="flex items-center gap-2">
+                      <SiNike className="size-5" /> One uppercase letter
+                    </div>
                   </p>
 
                   <p
@@ -184,7 +226,9 @@ function ForgotPassword() {
                         : "text-gray-400"
                     }
                   >
-                    ✔ One numerical digit
+                    <div className="flex items-center gap-2">
+                      <SiNike className="size-5" /> One numerical digit
+                    </div>
                   </p>
                 </div>
 
@@ -221,13 +265,16 @@ function ForgotPassword() {
                     </p>
                   )}
                 </div>
+                <div className="flex justify-center items-center bg-[#00288E] h-[56px] mt-3 ">
+                  <button
+                    type="submit"
+                    className="w-full h-[56px] bg-[#00288E] hover:bg-[#001f6b] text-white flex items-center justify-center gap-2 rounded-sm"
+                  >
+                    Set Password & Continue
+                    <IoIosArrowRoundForward className="size-5" />
+                  </button>
+                </div>
               </form>
-              <div className="flex justify-center items-center bg-[#00288E] h-[56px]">
-                <button className="w-full h-[56px] bg-[#00288E] hover:bg-[#001f6b] text-white flex items-center justify-center gap-2 rounded-sm">
-                  Set Password & Continue
-                  <IoIosArrowRoundForward className="size-5" />
-                </button>
-              </div>
             </div>
           </Card>
         </div>
@@ -236,4 +283,4 @@ function ForgotPassword() {
   );
 }
 
-export default ForgotPassword;
+export default ResetPassword;

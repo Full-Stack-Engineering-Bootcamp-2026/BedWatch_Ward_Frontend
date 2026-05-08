@@ -58,13 +58,12 @@ export default function Login() {
 
       toast.success(res.data.message || "Login Successful");
 
-      
       if (user.role === "ADMIN") {
         navigate("/admin-dashboard");
       } else if (user.role === "STAFF") {
         navigate("/staff-dashboard");
       } else if (user.role === "SENIOR_STAFF") {
-        navigate("/seniorStaff-dashboard");
+        navigate("/sr-staff/dashboard");
       } else {
         navigate("/");
       }
@@ -155,9 +154,11 @@ export default function Login() {
             </Button>
           </form>
 
-          <p className="text-sm text-center text-blue-600 cursor-pointer">
-            Forgot Password?
-          </p>
+          <Button onClick={() => navigate("/forgot-password")}>
+            <p className="text-sm text-center text-blue-600 cursor-pointer">
+              Forgot Password?
+            </p>
+          </Button>
         </CardContent>
       </Card>
 

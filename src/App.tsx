@@ -1,12 +1,14 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Dashboard from "./components/Admin/pages/Dashboard";
-import ForgotPassword from "./pages/ForgotPassword";
+import ForgotPassword from "./pages/ResetPassword";
 import Layout from "./components/Admin/layout/Layout";
 import StaffManagement from "./components/Admin/pages/StaffManagement";
 import WardManagement from "./components/Admin/pages/WardManagement";
 import AdminProfile from "./components/Admin/pages/AdminProfile";
 import WardControl from "./components/Admin/pages/WardControl";
+import ForgotPasswordEmail from "./pages/ForgotPasswordEmail";
+import ResetPassword from "./pages/ResetPassword";
 function App() {
   return (
     <BrowserRouter>
@@ -22,6 +24,8 @@ function App() {
         </Route>
 
         <Route path="ForgotPassword" element={<ForgotPassword />} />
+        <Route path="forgot-password" element={<ForgotPasswordEmail />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
     </BrowserRouter>
   );
