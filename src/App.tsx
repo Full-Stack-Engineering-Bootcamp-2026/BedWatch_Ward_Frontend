@@ -2,6 +2,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Dashboard from "./components/Admin/pages/Dashboard";
 import ForgotPassword from "./pages/ResetPassword";
+import Layout from "./components/layout/Layout";
+import SrStaffDashboard from "./components/SrStaff/DashBoard";
+import TransfersList from "./components/SrStaff/InterWardTransfer";
 import Layout from "./components/Admin/layout/Layout";
 import StaffManagement from "./components/Admin/pages/StaffManagement";
 import WardManagement from "./components/Admin/pages/WardManagement";
@@ -22,6 +25,9 @@ function App() {
           <Route path="/admin-profile" element={<AdminProfile />} />
           <Route path="/wardcontrol" element={<WardControl />} />
         </Route>
+
+        <Route path="/sr-staff/dashboard" element={<SrStaffDashboard />} />
+        <Route path="/sr-staff/transfers" element={<TransfersList />} />
 
         <Route path="ForgotPassword" element={<ForgotPassword />} />
         <Route path="forgot-password" element={<ForgotPasswordEmail />} />
