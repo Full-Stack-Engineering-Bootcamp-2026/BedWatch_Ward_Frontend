@@ -6,8 +6,10 @@ import SummaryCards from "../components/SummaryCards";
 import BedGrid from "../components/BedGrid";
 import { GoDownload } from "react-icons/go";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export default function StaffDashboard() {
+  const navigate = useNavigate();
   const [beds, setBeds] = useState([]);
   const [wardName, setWardName] = useState("");
 
@@ -59,7 +61,10 @@ export default function StaffDashboard() {
             <GoDownload />
             Export Status
           </button>
-          <button className="bg-[#00288E] text-white px-5 py-2 text-sm font-medium rounded-md">
+          <button
+            onClick={() => navigate("/staff/admit")}
+            className="bg-[#00288E] text-white px-5 py-2 text-sm font-medium rounded-md"
+          >
             + Allocate Bed
           </button>
         </div>
