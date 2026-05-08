@@ -29,8 +29,8 @@ export default function Navbar() {
         <HelpCircle className="w-5 h-5 text-gray-500 cursor-pointer" />
 
         <Avatar className="w-8 h-8">
-          <AvatarImage src="" />
-          <AvatarFallback>U</AvatarFallback>
+          <AvatarImage src="https://i.pravatar.cc/" />
+          <AvatarFallback></AvatarFallback>
         </Avatar>
       </div>
     </header>

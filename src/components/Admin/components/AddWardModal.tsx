@@ -14,10 +14,10 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 type AddWardModalProps = {
   children: React.ReactNode;
-  fetchDashboardData: () => Promise<void>;
 };
 const wardSchema = z.object({
   name: z.string().min(2, "Ward name is required"),
@@ -31,7 +31,7 @@ const wardSchema = z.object({
 
 type WardFormData = z.infer<typeof wardSchema>;
 
-const AddWardModal = ({ children, fetchDashboardData }: AddWardModalProps) => {
+const AddWardModal = ({ children }: AddWardModalProps) => {
   const [open, setOpen] = useState(false);
 
   const navigate = useNavigate();
@@ -55,11 +55,11 @@ const AddWardModal = ({ children, fetchDashboardData }: AddWardModalProps) => {
       reset();
 
       setOpen(false);
-      await fetchDashboardData();
+      toast.success("Ward created successfully !!!");
       window.location.reload();
     } catch (error: any) {
       console.error(error);
-      alert(error?.response?.data?.message || "Something went wrong");
+      toast.error(error?.response?.data?.message || "Something went wrong");
     }
   };
 

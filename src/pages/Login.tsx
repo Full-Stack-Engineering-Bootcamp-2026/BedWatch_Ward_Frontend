@@ -46,34 +46,45 @@ export default function Login() {
   const onSubmit = async (data: LoginFormData) => {
     try {
       const res = await login(data);
-      console.log(res.data.data);
+
+      const { token, user } = res.data.data;
 
       dispatch(
         loginAction({
-          token: res.data.data.token,
-          user: res.data.data.user,
+          token,
+          user,
         }),
       );
 
       toast.success(res.data.message || "Login Successful");
 
-      navigate("/admin-dashboard");
-    } catch (err: any) {
-      console.error(err);
-
-      toast.error(err?.response?.data?.message || "Login Failed");
+      
+      if (user.role === "ADMIN") {
+        navigate("/admin-dashboard");
+      } else if (user.role === "STAFF") {
+        navigate("/staff-dashboard");
+      } else if (user.role === "SENIOR_STAFF") {
+        navigate("/seniorStaff-dashboard");
+      } else {
+        navigate("/");
+      }
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || "Login Failed");
     }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[#FBF8FF]">
-      <div className="mb-6 text-center">
+    <div className="relative flex flex-col items-center justify-center min-h-screen bg-[#FBF8FF] overflow-hidden">
+      <div className="absolute -bottom-24 -left-24 w-[550px] h-[350px] bg-[#6CD3F7] opacity-30 blur-[120px] rounded-full"></div>
+      <div className="absolute -top-24 -right-24 w-[450px] h-[450px] bg-[#B8C4FF] opacity-50 blur-[120px] rounded-full"></div>
+
+      <div className="mb-6 text-center z-10">
         <MdOutlineBed className="flex justify-center w-48 size-14 text-[#00288E]" />
 
         <h1 className="text-3xl font-bold text-[#00288E]">BEDWATCH</h1>
       </div>
 
-      <Card className="flex flex-col justify-center w-full max-w-md p-2 shadow-md border border-gray-300 h-[442px]">
+      <Card className="z-10 flex flex-col justify-center w-full max-w-md p-2 shadow-md border border-gray-300 h-[442px]">
         <CardContent className="p-6 space-y-4">
           <div className="pb-7">
             <h2 className="font-inter text-lg font-semibold">
@@ -150,7 +161,7 @@ export default function Login() {
         </CardContent>
       </Card>
 
-      <div className="w-full max-w-md flex justify-between p-2 mt-6 text-xs text-gray-500">
+      <div className="z-10 w-full max-w-md flex justify-between p-2 mt-6 text-xs text-gray-500">
         <span className="flex items-center gap-1">
           <GoShieldCheck />
           Secure Access
