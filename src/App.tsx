@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Dashboard from "./components/Admin/pages/Dashboard";
-import ForgotPassword from "./pages/ForgotPassword";
+import ForgotPassword from "./pages/ResetPassword";
 import Layout from "./components/layout/Layout";
 import SrStaffDashboard from "./components/SrStaff/DashBoard";
 import TransfersList from "./components/SrStaff/InterWardTransfer";
@@ -10,6 +10,8 @@ import StaffManagement from "./components/Admin/pages/StaffManagement";
 import WardManagement from "./components/Admin/pages/WardManagement";
 import AdminProfile from "./components/Admin/pages/AdminProfile";
 import WardControl from "./components/Admin/pages/WardControl";
+import ForgotPasswordEmail from "./pages/ForgotPasswordEmail";
+import ResetPassword from "./pages/ResetPassword";
 function App() {
   return (
     <BrowserRouter>
@@ -28,6 +30,8 @@ function App() {
         <Route path="/sr-staff/transfers" element={<TransfersList />} />
 
         <Route path="ForgotPassword" element={<ForgotPassword />} />
+        <Route path="forgot-password" element={<ForgotPasswordEmail />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
     </BrowserRouter>
   );

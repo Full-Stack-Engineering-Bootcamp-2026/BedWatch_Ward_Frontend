@@ -98,7 +98,19 @@ function AddStaffModal({ children }: Props) {
         wardId: data.role === "STAFF" ? Number(data.wardId) : null,
       });
 
-      toast.success("Staff account created successfully");
+      await axios.post(
+        "http://localhost:3000/api/v1/authF/send-account-setup-email",
+        {
+          email: data.email,
+          role: data.role,
+        },
+      );
+
+      toast.success(
+        `${data.role} account created and setup email sent successfully`,
+      );
+
+      // toast.success("Staff account created successfully");
 
       reset();
 
