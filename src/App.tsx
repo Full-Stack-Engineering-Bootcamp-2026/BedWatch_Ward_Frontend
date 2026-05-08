@@ -12,6 +12,7 @@ import AdminProfile from "./components/Admin/pages/AdminProfile";
 import WardControl from "./components/Admin/pages/WardControl";
 import ForgotPasswordEmail from "./pages/ForgotPasswordEmail";
 import ResetPassword from "./pages/ResetPassword";
+import SrStaffRoute from "./components/SrStaff/Layout/Layout";
 function App() {
   return (
     <BrowserRouter>
@@ -22,8 +23,10 @@ function App() {
           <Route path="/admin-dashboard" element={<Dashboard />} />
         </Route>
 
-        <Route path="/sr-staff/dashboard" element={<SrStaffDashboard />} />
-        <Route path="/sr-staff/transfers" element={<TransfersList />} />
+        <Route element={<SrStaffRoute />}>
+          <Route path="/sr-staff/dashboard" element={<SrStaffDashboard />} />
+          <Route path="/sr-staff/transfers" element={<TransfersList />} />
+        </Route>
 
         <Route path="forgot-password" element={<ForgotPasswordEmail />} />
         <Route path="/reset-password" element={<ResetPassword />} />
