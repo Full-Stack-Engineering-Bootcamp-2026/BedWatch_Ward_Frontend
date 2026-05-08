@@ -150,7 +150,7 @@ export default function Login() {
             </div>
 
             <Button className="w-full text-white bg-[#1E40AF] hover:bg-[#1E40AF]">
-              Login →
+              Login 
             </Button>
           </form>
 
