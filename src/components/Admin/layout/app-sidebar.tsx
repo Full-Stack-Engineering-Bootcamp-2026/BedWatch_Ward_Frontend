@@ -26,11 +26,6 @@ const menu = [
     path: "/Wardview",
   },
   {
-    name: "Ward Control",
-    icon: FaBuildingShield,
-    path: "/wardcontrol",
-  },
-  {
     name: "System Admin",
     icon: LiaUserShieldSolid,
     path: "/Systemadmin",

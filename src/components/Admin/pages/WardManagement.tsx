@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+
+import axios from "axios";
 
 import { BedDouble, TriangleAlert, ShieldCheck, Activity } from "lucide-react";
 
@@ -38,68 +40,109 @@ import {
 } from "@/components/ui/pagination";
 
 import Card from "../components/Card";
+
 import AddWardModal from "../components/AddWardModal";
 
-const wards = [
-  {
-    id: 1,
-    name: "ICU – East Wing Level 4",
-    totalBeds: 24,
-    available: 2,
-    occupied: 21,
-    cleaning: 1,
-  },
-  {
-    id: 2,
-    name: "Maternity – North Block",
-    totalBeds: 32,
-    available: 14,
-    occupied: 15,
-    cleaning: 3,
-  },
-  {
-    id: 3,
-    name: "Cardiology Unit",
-    totalBeds: 18,
-    available: 4,
-    occupied: 10,
-    cleaning: 4,
-  },
-];
+type WardType = {
+  id: number;
+  name: string;
+  type: string;
+  capacity: number;
+  description: string;
 
-const bedData = [
-  {
-    bedNo: "C-101",
-    status: "Occupied",
-    patient: "Thompson, James",
-    lastChange: "Oct 24, 08:30 AM",
-  },
-  {
-    bedNo: "C-102",
-    status: "Available",
-    patient: "None",
-    lastChange: "Oct 24, 11:15 AM",
-  },
-  {
-    bedNo: "C-103",
-    status: "Cleaning",
-    patient: "Discharged Patient",
-    lastChange: "Oct 24, 12:45 PM",
-  },
-  {
-    bedNo: "C-104",
-    status: "Occupied",
-    patient: "Garcia, Elena",
-    lastChange: "Oct 22, 02:10 PM",
-  },
-];
+  availableBeds: number;
+  occupiedBeds: number;
+  cleaningBeds: number;
+};
+
+type BedType = {
+  id: number;
+  bed_number: string;
+  status: string;
+  updated_at: string;
+};
 
 function WardManagement() {
-  const [selectedWardId, setSelectedWardId] = useState("1");
+  const [wards, setWards] = useState<WardType[]>([]);
 
-  const selectedWard = wards.find(
-    (ward) => ward.id.toString() === selectedWardId,
+  const [beds, setBeds] = useState<BedType[]>([]);
+
+  const [selectedWardId, setSelectedWardId] = useState("");
+
+  const [loading, setLoading] = useState(false);
+
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const rowsPerPage = 5;
+
+  const fetchWardSummary = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/api/v1/wardsAdmin/summary",
+      );
+
+      setWards(response.data.data);
+
+      if (response.data.data.length > 0) {
+        setSelectedWardId(response.data.data[0].id.toString());
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchBedsByWard = async (wardId: string) => {
+    try {
+      setLoading(true);
+
+      const response = await axios.get(
+        `http://localhost:3000/api/v1/wardsAdmin/${wardId}/beds`,
+      );
+
+      setBeds(response.data.data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchWardSummary();
+  }, []);
+
+  useEffect(() => {
+    setCurrentPage(1);
+
+    if (selectedWardId) {
+      fetchBedsByWard(selectedWardId);
+    }
+  }, [selectedWardId]);
+
+  const selectedWard = useMemo(() => {
+    return wards.find((ward) => ward.id.toString() === selectedWardId);
+  }, [wards, selectedWardId]);
+
+  const totalPages = Math.ceil(beds.length / rowsPerPage);
+
+  const paginatedBeds = beds.slice(
+    (currentPage - 1) * rowsPerPage,
+    currentPage * rowsPerPage,
   );
+
+  const totalCapacity = wards.reduce((acc, ward) => acc + ward.capacity, 0);
+
+  const totalAvailable = wards.reduce(
+    (acc, ward) => acc + ward.availableBeds,
+    0,
+  );
+
+  const totalCleaning = wards.reduce((acc, ward) => acc + ward.cleaningBeds, 0);
+
+  const totalOccupied = wards.reduce((acc, ward) => acc + ward.occupiedBeds, 0);
+
+  const occupancyRate =
+    totalCapacity > 0 ? Math.round((totalOccupied / totalCapacity) * 100) : 0;
 
   return (
     <div className="w-full bg-[#FBF8FF]">
@@ -117,17 +160,29 @@ function WardManagement() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <Card title="Total Capacity" value={482} icon={<BedDouble />} />
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <Card
+          title="Total Capacity"
+          value={totalCapacity}
+          icon={<BedDouble />}
+        />
 
-        <Card title="Available Beds" value={124} icon={<ShieldCheck />} />
+        <Card
+          title="Available Beds"
+          value={totalAvailable}
+          icon={<ShieldCheck />}
+        />
 
-        <Card title="Turnaround Mode" value={18} icon={<Activity />} />
+        <Card title="Cleaning Beds" value={totalCleaning} icon={<Activity />} />
 
-        <Card title="Occupancy Rate" value="84%" icon={<TriangleAlert />} />
+        <Card
+          title="Occupancy Rate"
+          value={`${occupancyRate}%`}
+          icon={<TriangleAlert />}
+        />
       </div>
 
-      <ShadcnCard className="mt-6 rounded-2xl shadow-sm">
+      <ShadcnCard className="mt-6 rounded-2xl shadow-sm overflow-visible">
         <CardHeader className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <CardTitle className="text-2xl">Select Ward</CardTitle>
@@ -139,11 +194,11 @@ function WardManagement() {
 
           <div className="w-full lg:w-[320px]">
             <Select value={selectedWardId} onValueChange={setSelectedWardId}>
-              <SelectTrigger>
+              <SelectTrigger className="h-11 w-full border border-gray-200 bg-[#F8FAFC] hover:bg-[#F1F5F9]">
                 <SelectValue placeholder="Select Ward" />
               </SelectTrigger>
 
-              <SelectContent>
+              <SelectContent position="popper" className="w-[320px] bg-white">
                 {wards.map((ward) => (
                   <SelectItem key={ward.id} value={ward.id.toString()}>
                     {ward.name}
@@ -161,34 +216,34 @@ function WardManagement() {
             <CardTitle className="text-2xl">{selectedWard.name}</CardTitle>
 
             <p className="text-sm text-gray-500">
-              Operational Capacity: {selectedWard.occupied} /{" "}
-              {selectedWard.totalBeds} Beds Occupied
+              Operational Capacity: {selectedWard.occupiedBeds} /{" "}
+              {selectedWard.capacity} Beds Occupied
             </p>
           </CardHeader>
 
           <CardContent>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
               <Card
                 title="Total Beds"
-                value={selectedWard.totalBeds}
+                value={selectedWard.capacity}
                 icon={<BedDouble />}
               />
 
               <Card
                 title="Available"
-                value={selectedWard.available}
+                value={selectedWard.availableBeds}
                 icon={<ShieldCheck />}
               />
 
               <Card
                 title="Cleaning"
-                value={selectedWard.cleaning}
+                value={selectedWard.cleaningBeds}
                 icon={<Activity />}
               />
 
               <Card
                 title="Occupied"
-                value={selectedWard.occupied}
+                value={selectedWard.occupiedBeds}
                 icon={<TriangleAlert />}
               />
             </div>
@@ -201,42 +256,50 @@ function WardManagement() {
 
                     <TableHead>Status</TableHead>
 
-                    <TableHead>Current Patient</TableHead>
-
-                    <TableHead>Last Status Change</TableHead>
+                    <TableHead>Last Updated</TableHead>
                   </TableRow>
                 </TableHeader>
 
                 <TableBody>
-                  {bedData.map((bed, index) => (
-                    <TableRow key={index}>
-                      <TableCell className="font-semibold text-[#1E40AF]">
-                        {bed.bedNo}
-                      </TableCell>
-
-                      <TableCell>
-                        <span
-                          className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                            bed.status === "Available"
-                              ? "bg-green-100 text-green-700"
-                              : bed.status === "Cleaning"
-                                ? "bg-orange-100 text-orange-700"
-                                : "bg-blue-100 text-blue-700"
-                          }`}
-                        >
-                          {bed.status}
-                        </span>
-                      </TableCell>
-
-                      <TableCell className="font-medium">
-                        {bed.patient}
-                      </TableCell>
-
-                      <TableCell className="text-gray-500">
-                        {bed.lastChange}
+                  {loading ? (
+                    <TableRow>
+                      <TableCell colSpan={3} className="py-10 text-center">
+                        Loading...
                       </TableCell>
                     </TableRow>
-                  ))}
+                  ) : paginatedBeds.length > 0 ? (
+                    paginatedBeds.map((bed) => (
+                      <TableRow key={bed.id}>
+                        <TableCell className="font-semibold text-[#1E40AF]">
+                          {bed.bed_number}
+                        </TableCell>
+
+                        <TableCell>
+                          <span
+                            className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                              bed.status === "AVAILABLE"
+                                ? "bg-green-100 text-green-700"
+                                : bed.status === "CLEANING"
+                                  ? "bg-orange-100 text-orange-700"
+                                  : "bg-blue-100 text-blue-700"
+                            }`}
+                          >
+                            {bed.status}
+                          </span>
+                        </TableCell>
+
+                        <TableCell className="text-gray-500">
+                          {new Date(bed.updated_at).toLocaleString()}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={3} className="py-10 text-center">
+                        No beds found
+                      </TableCell>
+                    </TableRow>
+                  )}
                 </TableBody>
               </Table>
             </div>
@@ -245,23 +308,47 @@ function WardManagement() {
               <Pagination>
                 <PaginationContent>
                   <PaginationItem>
-                    <PaginationLink href="#">
+                    <PaginationLink
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+
+                        if (currentPage > 1) {
+                          setCurrentPage(currentPage - 1);
+                        }
+                      }}
+                    >
                       <FaChevronLeft className="h-3 w-3" />
                     </PaginationLink>
                   </PaginationItem>
 
-                  <PaginationItem>
-                    <PaginationLink href="#" isActive>
-                      1
-                    </PaginationLink>
-                  </PaginationItem>
+                  {Array.from({ length: totalPages }, (_, index) => (
+                    <PaginationItem key={index}>
+                      <PaginationLink
+                        href="#"
+                        isActive={currentPage === index + 1}
+                        onClick={(e) => {
+                          e.preventDefault();
+
+                          setCurrentPage(index + 1);
+                        }}
+                      >
+                        {index + 1}
+                      </PaginationLink>
+                    </PaginationItem>
+                  ))}
 
                   <PaginationItem>
-                    <PaginationLink href="#">2</PaginationLink>
-                  </PaginationItem>
+                    <PaginationLink
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
 
-                  <PaginationItem>
-                    <PaginationLink href="#">
+                        if (currentPage < totalPages) {
+                          setCurrentPage(currentPage + 1);
+                        }
+                      }}
+                    >
                       <FaChevronRight className="h-3 w-3" />
                     </PaginationLink>
                   </PaginationItem>
