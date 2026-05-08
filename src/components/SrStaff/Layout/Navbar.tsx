@@ -52,7 +52,7 @@ export default function Navbar({ setOpen }: NavbarProps) {
       <div className="flex items-center gap-3">
         <HelpCircle className="w-5 h-5 text-gray-500 cursor-pointer" />
 
-        <NavLink to="/admin-profile">
+        <NavLink to="/sr-staff/profile">
           <Avatar className="w-8 h-8 md:w-9 md:h-9 cursor-pointer">
             <AvatarImage src="" />
             <AvatarFallback>U</AvatarFallback>

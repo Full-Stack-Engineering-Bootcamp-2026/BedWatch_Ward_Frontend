@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 
 import { FaFileExport } from "react-icons/fa";
+import TransferReviewModal from "@/components/SrStaff/TransferModal";
 
 import {
   getTransfers,
@@ -43,6 +44,12 @@ export default function TransfersList() {
   const [transfers, setTransfers] = useState<Transfer[]>([]);
 
   const [loading, setLoading] = useState(true);
+
+  const [selectedTransfer, setSelectedTransfer] = useState<Transfer | null>(
+    null,
+  );
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const fetchTransfers = async () => {
     try {
@@ -86,9 +93,32 @@ export default function TransfersList() {
     return filtered;
   }, [searchTerm, transfers, activeTab]);
 
+  //   const handleReject = async (id: number) => {
+  //     try {
+  //       await rejectTransfer(id);
+
+  //       fetchTransfers();
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   };
+
+  //   const handleApprove = async (id: number) => {
+  //     try {
+  //       await approveTransfer(id);
+
+  //       fetchTransfers();
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   };
+
   const handleReject = async (id: number) => {
     try {
       await rejectTransfer(id);
+
+      setIsModalOpen(false);
+      setSelectedTransfer(null);
 
       fetchTransfers();
     } catch (error) {
@@ -99,6 +129,9 @@ export default function TransfersList() {
   const handleApprove = async (id: number) => {
     try {
       await approveTransfer(id);
+
+      setIsModalOpen(false);
+      setSelectedTransfer(null);
 
       fetchTransfers();
     } catch (error) {
@@ -330,7 +363,7 @@ export default function TransfersList() {
                   </span>
                 </td>
 
-                <td className="py-4 px-6 text-right">
+                {/* <td className="py-4 px-6 text-right">
                   {t.status === "PENDING" ? (
                     <div className="flex justify-end gap-2">
                       <button
@@ -349,6 +382,46 @@ export default function TransfersList() {
                     </div>
                   ) : (
                     <button className="p-1.5 text-gray-400 hover:text-blue-600 transition-colors">
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                        ></path>
+
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                        ></path>
+                      </svg>
+                    </button>
+                  )}
+                </td> */}
+
+                <td className="py-4 px-6 text-right">
+                  {t.status === "PENDING" ? (
+                    <button
+                      onClick={() => {
+                        setSelectedTransfer(t);
+                        setIsModalOpen(true);
+                      }}
+                      className="px-3 py-1.5 bg-[#1E40AF] text-white rounded text-xs font-semibold hover:bg-blue-800 transition-colors"
+                    >
+                      Review Request
+                    </button>
+                  ) : (
+                    <button
+                      disabled
+                      className="p-1.5 text-gray-300 cursor-not-allowed"
+                    >
                       <svg
                         className="w-5 h-5"
                         fill="none"
@@ -472,6 +545,14 @@ export default function TransfersList() {
           </button>
         </div>
       </div>
+
+      <TransferReviewModal
+        open={isModalOpen}
+        transfer={selectedTransfer}
+        onOpenChange={setIsModalOpen}
+        onApprove={handleApprove}
+        onReject={handleReject}
+      />
     </div>
   );
 }
