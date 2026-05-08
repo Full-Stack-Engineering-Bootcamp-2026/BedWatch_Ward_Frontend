@@ -1,4 +1,5 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
+import seniorStaffReducer from "./slices/srStaffSlice";
 
 import {
   persistStore,
@@ -33,6 +34,7 @@ const storage = {
 const rootReducer = combineReducers({
   counter: counterReducer,
   auth: authReducer,
+  seniorStaff: seniorStaffReducer,
 });
 
 const persistConfig = {
