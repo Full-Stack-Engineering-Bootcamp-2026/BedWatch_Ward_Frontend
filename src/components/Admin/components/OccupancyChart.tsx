@@ -1,5 +1,5 @@
 import { Pie, PieChart, Cell } from "recharts";
-
+import { useSelector } from "react-redux";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -16,6 +16,7 @@ type WardSummary = {
 };
 
 export function OccupancyChart() {
+  const token = useSelector((state: any) => state.auth.token);
   const [chartData, setChartData] = useState([
     { name: "Occupied", value: 0, fill: "#F59E0B" },
     { name: "Available", value: 0, fill: "#16A34A" },
@@ -27,9 +28,12 @@ export function OccupancyChart() {
       try {
         const response = await axios.get(
           "http://localhost:3000/api/v1/wards/summary",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
         );
-        console.log(response.data);
-        
 
         const wards: WardSummary[] = response.data.data;
 
@@ -71,8 +75,6 @@ export function OccupancyChart() {
     };
     fetchWardSummary();
   }, []);
-  
-  
 
   const total = chartData.reduce((sum, item) => sum + item.value, 0);
   return (
