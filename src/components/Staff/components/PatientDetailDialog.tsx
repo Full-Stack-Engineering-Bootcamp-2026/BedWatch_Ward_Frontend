@@ -1,216 +1,304 @@
+import axios from "axios";
+
+import { useState } from "react";
+
+import { useSelector } from "react-redux";
+
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-import { Button } from "@/components/ui/button";
+import { FaUserInjured } from "react-icons/fa";
 
-import {
-  CalendarDays,
-  User,
-  Stethoscope,
-  MapPin,
-  Printer,
-  LogOut,
-} from "lucide-react";
-
-import { useState } from "react";
-
-import DischargeDialog from "./DischargePatientDialog";
+import TransferPatientDialog from "./TransferPatientDialog";
 
 interface Props {
   children: React.ReactNode;
+
+  disabled?: boolean;
+
+  bed: {
+    id: number;
+
+    bed_number: string;
+
+    status: string;
+
+    patient?: {
+      name: string;
+      age: number;
+      diagnosis: string;
+      admittedAt: string;
+    };
+
+    admitted?: string;
+    duration?: string;
+    priority?: string;
+    nurse?: string;
+    doctor?: string;
+  };
 }
 
-export default function PatientDetailDialog({ children }: Props) {
-  const [openPatientDialog, setOpenPatientDialog] = useState(false);
+export default function PatientDetailDialog({
+  children,
+  disabled,
+  bed,
+}: Props) {
 
-  const [openDischarge, setOpenDischarge] = useState(false);
+  const [open, setOpen] =
+    useState(false);
+
+  const token = useSelector(
+    (state: any) => state.auth.token
+  );
+
+  const handleDischarge =
+    async () => {
+
+      try {
+
+        await axios.patch(
+          `http://localhost:3000/api/v1/staff-dashboard/beds/${bed.id}/discharge`,
+          {},
+          {
+            headers: {
+              Authorization:
+                `Bearer ${token}`,
+            },
+          }
+        );
+
+        window.location.reload();
+
+      } catch (error) {
+
+        console.log(error);
+      }
+    };
 
   return (
-    <>
-      <Dialog
-        open={openPatientDialog}
-        onOpenChange={setOpenPatientDialog}
-      >
-        <DialogTrigger asChild>{children}</DialogTrigger>
 
-        <DialogContent className="w-[90vw] sm:w-[80vw] lg:max-w-3xl max-h-[90vh] overflow-y-auto overflow-x-hidden p-0 bg-white rounded-xl">
-          <DialogHeader className="border-b px-4 py-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <DialogTitle className="text-xl font-bold text-[#00288E]">
-                  Patient Detail
-                </DialogTitle>
+    <Dialog
+      open={open}
+      onOpenChange={setOpen}
+    >
 
-                <p className="text-[10px] uppercase tracking-[3px] text-slate-400 mt-1">
-                  Medical Record View
-                </p>
-              </div>
-            </div>
-          </DialogHeader>
+      {disabled ? (
+        <div className="w-full">
+          {children}
+        </div>
+      ) : (
+        <DialogTrigger asChild>
 
-          <div className="p-4 space-y-5 overflow-hidden">
-            <div className="flex flex-col lg:flex-row items-start justify-between gap-5">
-              <div>
-                <p className="text-xs uppercase tracking-wide text-slate-400">
-                  Patient Name
-                </p>
+          <button
+            type="button"
+            className="w-full text-left"
+          >
+            {children}
+          </button>
 
-                <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mt-2">
-                  Jonathan Miller
-                </h2>
+        </DialogTrigger>
+      )}
 
-                <div className="flex flex-wrap items-center gap-4 mt-4 text-sm text-slate-600">
-                  <div className="flex items-center gap-2">
-                    <CalendarDays className="w-4 h-4 text-[#00288E]" />
-                    64 Years
-                  </div>
+      <DialogContent className="!w-[1100px] !max-w-[1100px] p-0 overflow-hidden bg-white border border-slate-200 shadow-2xl rounded-2xl">
 
-                  <div className="flex items-center gap-2">
-                    <User className="w-4 h-4 text-[#00288E]" />
-                    Male
-                  </div>
-                </div>
-              </div>
+        <DialogTitle className="hidden">
+          Patient Details
+        </DialogTitle>
 
-              <div className="border-2 border-[#00288E] rounded-xl px-5 py-4 text-center w-full sm:w-fit">
-                <p className="text-xs uppercase font-semibold text-slate-500">
-                  Assigned Bed
-                </p>
+        {/* HEADER */}
+        <div className="flex items-center justify-between px-6 py-4 bg-[#F4F6FF] border-b border-slate-200">
 
-                <h2 className="text-2xl sm:text-4xl font-bold text-[#00288E] mt-2">
-                  401-A
-                </h2>
-              </div>
-            </div>
+          <div className="flex items-center gap-3">
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 border-t pt-5">
-              <div>
-                <p className="text-xs uppercase tracking-wide text-slate-400 mb-2">
-                  Admission Date / Time
-                </p>
-
-                <div className="flex items-center gap-2 text-sm font-medium text-slate-700">
-                  <CalendarDays className="w-4 h-4 text-[#00288E]" />
-                  12 Oct 2023, 08:30 AM
-                </div>
-              </div>
-
-              <div>
-                <p className="text-xs uppercase tracking-wide text-slate-400 mb-2">
-                  Admitting Doctor
-                </p>
-
-                <div className="flex items-center gap-2 text-sm font-medium text-slate-700">
-                  <Stethoscope className="w-4 h-4 text-[#00288E]" />
-                  Dr. Helena Vance (Internal Med)
-                </div>
-              </div>
+            <div className="w-11 h-11 rounded-lg bg-blue-600 flex items-center justify-center shadow-sm">
+              <FaUserInjured className="text-white text-lg" />
             </div>
 
             <div>
-              <p className="text-xs uppercase tracking-wide text-slate-400 mb-3">
-                Admission Reason
+
+              <h2 className="text-lg font-bold text-slate-800">
+                Patient Details
+              </h2>
+
+              <p className="text-[11px] font-medium uppercase tracking-[0.15em] text-slate-500">
+                Medical Record View
               </p>
 
-              <div className="border rounded-lg bg-slate-50 p-4 text-[13px] text-slate-700 leading-6">
-                Post-operative observation following laparoscopic
-                cholecystectomy. Patient presenting with mild localized pain,
-                vitals within stable range. No immediate complications reported
-                in PACU.
+            </div>
+          </div>
+        </div>
+
+        {/* BODY */}
+        <div className="p-6 space-y-6">
+
+          <div className="flex items-start justify-between">
+
+            <div>
+
+              <p className="text-xs uppercase tracking-wide text-slate-400">
+                Patient Name
+              </p>
+
+              <h2 className="text-3xl font-bold text-slate-900 mt-1">
+                {bed.patient?.name || "N/A"}
+              </h2>
+
+              <div className="flex items-center gap-4 mt-3 text-sm text-slate-600">
+
+                <span>
+                  Age: {bed.patient?.age || "N/A"}
+                </span>
+
+                <span>
+                  Bed: {bed.bed_number}
+                </span>
+
               </div>
             </div>
 
-            <div>
-              <p className="text-xs uppercase tracking-wide text-slate-400 mb-3">
-                Clinical Notes
+            {/* BED BADGE */}
+            <div className="bg-blue-50 border border-blue-200 rounded-xl px-8 py-5 text-center">
+
+              <p className="text-xs uppercase tracking-wide text-blue-500 font-semibold">
+                Assigned Bed
               </p>
 
-              <div className="border-l-4 border-[#00288E] bg-slate-50 p-4 space-y-4 rounded-r-lg">
-                <div className="flex flex-col sm:flex-row gap-3 sm:gap-5">
-                  <div className="text-xs font-bold text-[#00288E] min-w-[60px]">
-                    14:20 PM
-                  </div>
+              <h2 className="text-4xl font-bold text-blue-700 mt-1">
+                {bed.bed_number}
+              </h2>
 
-                  <p className="text-[13px] text-slate-700 leading-6">
-                    Physiotherapy assessment completed. Patient ambulatory with
-                    assistance. Tolerating clear liquids well. Pain managed via
-                    oral meds.
-                  </p>
-                </div>
-
-                <div className="flex flex-col sm:flex-row gap-3 sm:gap-5">
-                  <div className="text-xs font-bold text-[#00288E] min-w-[60px]">
-                    10:05 AM
-                  </div>
-
-                  <p className="text-[13px] text-slate-700 leading-6">
-                    Initial rounds completed. Dressing is clean, dry and intact.
-                    IV fluids titrated to 100ml/hr per protocol.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <p className="text-xs uppercase tracking-wide text-slate-400 mb-3">
-                Location Tracking
-              </p>
-
-              <div className="h-28 sm:h-32 w-full rounded-xl bg-slate-200 flex items-center justify-center relative overflow-hidden">
-                <MapPin className="w-8 h-8 text-[#00288E]" />
-
-                <div className="absolute bottom-4 bg-[#00288E] text-white text-xs px-3 py-1 rounded-full">
-                  Room 401
-                </div>
-              </div>
             </div>
           </div>
 
-          <div className="border-t px-4 py-3 flex flex-col lg:flex-row gap-3 items-center justify-between bg-slate-50">
-            <Button
-              size="sm"
-              variant="ghost"
-              className="text-slate-600 w-full sm:w-auto"
-              onClick={() => setOpenPatientDialog(false)}
+          {/* INFO GRID */}
+          <div className="grid grid-cols-2 gap-4">
+
+            <div className="border rounded-xl p-4 bg-slate-50">
+
+              <p className="text-xs uppercase tracking-wide text-slate-400">
+                Admission Date
+              </p>
+
+              <p className="mt-2 font-medium text-slate-800">
+                {bed.patient?.admittedAt || "--"}
+              </p>
+
+            </div>
+
+            <div className="border rounded-xl p-4 bg-slate-50">
+
+              <p className="text-xs uppercase tracking-wide text-slate-400">
+                Doctor Assigned
+              </p>
+
+              <p className="mt-2 font-medium text-slate-800">
+                {bed.doctor || "Not Assigned"}
+              </p>
+
+            </div>
+          </div>
+
+          {/* DIAGNOSIS */}
+          <div>
+
+            <p className="text-xs uppercase tracking-wide text-slate-400 mb-2">
+              Admission Reason
+            </p>
+
+            <div className="border rounded-xl p-4 bg-slate-50 text-sm leading-6 text-slate-700">
+
+              {bed.patient?.diagnosis ||
+                "No diagnosis available"}
+
+            </div>
+          </div>
+
+          {/* CLINICAL NOTES */}
+          <div>
+
+            <p className="text-xs uppercase tracking-wide text-slate-400 mb-3">
+              Clinical Notes
+            </p>
+
+            <div className="space-y-3 border rounded-xl p-4">
+
+              <div className="border-l-4 border-blue-500 pl-4">
+
+                <p className="text-xs text-blue-600 font-semibold">
+                  14:20 PM
+                </p>
+
+                <p className="text-sm text-slate-700 mt-1">
+                  Patient stable and responding well to treatment.
+                </p>
+
+              </div>
+
+              <div className="border-l-4 border-slate-300 pl-4">
+
+                <p className="text-xs text-slate-500 font-semibold">
+                  10:05 AM
+                </p>
+
+                <p className="text-sm text-slate-700 mt-1">
+                  Initial rounds completed successfully.
+                </p>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* FOOTER */}
+        <div className="border-t px-6 py-4 flex items-center justify-between bg-slate-50">
+
+          <button
+            onClick={() => setOpen(false)}
+            className="text-sm font-medium text-slate-600 hover:text-slate-900 transition"
+          >
+            Close Record
+          </button>
+
+          <div className="flex items-center gap-3">
+<TransferPatientDialog
+  transferPatient={{
+    patientId: bed.id,
+
+    currentBedId: bed.id,
+
+    currentWardId: 1,
+
+    name:
+      bed.patient?.name ||
+      "Unknown Patient",
+
+    ward: "General Ward",
+
+    bed:
+      bed.bed_number ||
+      "N/A",
+  }}
+>
+  <button className="px-4 py-2 rounded-lg border border-slate-300 text-sm font-medium hover:bg-blue-700 transition bg-blue-600 text-white">
+    Transfer Patient
+  </button>
+</TransferPatientDialog>
+
+            <button
+              onClick={handleDischarge}
+              className="px-4 py-2 rounded-lg bg-red-600 text-white text-sm font-medium hover:bg-red-700 transition"
             >
-              Close Record
-            </Button>
+              Discharge Patient
+            </button>
 
-            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-              <Button
-                size="sm"
-                variant="outline"
-                className="gap-2 w-full sm:w-auto"
-              >
-                <Printer className="w-4 h-4" />
-                Print Charts
-              </Button>
-
-              <Button
-                onClick={() => {
-                  setOpenPatientDialog(false);
-                  setOpenDischarge(true);
-                }}
-                size="sm"
-                className="text-white bg-[#00288E] hover:bg-[#001d66] gap-2 w-full sm:w-auto"
-              >
-                <LogOut className="w-4 h-4" />
-                Discharge Patient
-              </Button>
-            </div>
           </div>
-        </DialogContent>
-      </Dialog>
+        </div>
 
-      <DischargeDialog
-        open={openDischarge}
-        onOpenChange={setOpenDischarge}
-      />
-    </>
+      </DialogContent>
+    </Dialog>
   );
 }
