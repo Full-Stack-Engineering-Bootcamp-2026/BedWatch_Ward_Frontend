@@ -40,12 +40,6 @@ export default function Navbar({ setOpen }: NavbarProps) {
       </div>
 
       <nav className="hidden xl:flex items-center gap-6 text-sm text-gray-600">
-        <span className="cursor-pointer hover:text-black">Ward View</span>
-
-        {/* <span className="cursor-pointer hover:text-black">Staffing</span>
-
-        <span className="cursor-pointer hover:text-black">Resource Map</span> */}
-
         <span className="cursor-pointer hover:text-black">Reports</span>
       </nav>
 

@@ -27,7 +27,7 @@ const menu = [
   {
     name: "All Wards",
     icon: LiaUserShieldSolid,
-    path: "/Systemadmin",
+    path: "/Sr-staff/AllWards",
   },
 ];
 
@@ -81,11 +81,14 @@ export default function AppSidebar({ open, setOpen }: SidebarProps) {
             })}
 
             <div className="pt-6 text-white">
-              
-                <Button className="w-full h-11 bg-black hover:bg-[#18379c]">
+              <Button
+                asChild
+                className="w-full h-11 bg-black hover:bg-[#18379c]"
+              >
+                <NavLink to="/sr-staff/ViewPending">
                   View Pending Requests
-                </Button>
-              
+                </NavLink>
+              </Button>
             </div>
           </div>
         </div>

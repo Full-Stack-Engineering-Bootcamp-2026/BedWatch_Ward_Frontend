@@ -14,6 +14,8 @@ import ForgotPasswordEmail from "./pages/ForgotPasswordEmail";
 import ResetPassword from "./pages/ResetPassword";
 import SrStaffRoute from "./components/SrStaff/Layout/Layout";
 import SrStaffProfile from "./components/SrStaff/SrStaff.profile";
+import SrStaffAllWards from "./components/SrStaff/AllWards";
+import ViewTransferReq from "./components/SrStaff/ViewPending";
 function App() {
   return (
     <BrowserRouter>
@@ -28,6 +30,8 @@ function App() {
           <Route path="/sr-staff/dashboard" element={<SrStaffDashboard />} />
           <Route path="/sr-staff/transfers" element={<TransfersList />} />
           <Route path="/sr-staff/profile" element={<SrStaffProfile />} />
+          <Route path="/sr-staff/AllWards" element={<SrStaffAllWards />} />
+          <Route path="/sr-staff/ViewPending" element={<ViewTransferReq />} />
         </Route>
 
         <Route path="forgot-password" element={<ForgotPasswordEmail />} />
