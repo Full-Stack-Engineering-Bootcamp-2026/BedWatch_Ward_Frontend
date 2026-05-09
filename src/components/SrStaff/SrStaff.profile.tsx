@@ -1,7 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, type ChangeEvent } from "react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { toast } from "react-toastify";
 import { getLoggedInUserProfile } from "@/services/srStaff.profile.service";
+import { logout } from "@/store/slices/authSlice";
+import { LogOut, KeyRound } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 type Ward = {
   id: number;
@@ -21,15 +38,81 @@ type ProfileUser = {
 };
 
 export default function SrStaffProfile() {
-  const [user, setUser] = useState<ProfileUser | null>(null);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const { user: authUser, token } = useSelector((state: any) => state.auth);
+
+  const [profileUser, setProfileUser] = useState<ProfileUser | null>(null);
   const [loading, setLoading] = useState(true);
+  const [open, setOpen] = useState(false);
+
+  const [formData, setFormData] = useState({
+    oldPassword: "",
+    newPassword: "",
+  });
+
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleChangePassword = async () => {
+    try {
+      if (!authUser?.id) {
+        toast.error("User not found");
+        return;
+      }
+
+      if (!formData.oldPassword || !formData.newPassword) {
+        toast.error("Please enter old and new password");
+        return;
+      }
+
+      if (!token) {
+        toast.error("Token not found. Please login again.");
+        return;
+      }
+
+      const response = await axios.put(
+        "http://localhost:3000/api/v1/usersAdmin/change-password",
+        {
+          id: Number(authUser.id),
+          oldPassword: formData.oldPassword,
+          newPassword: formData.newPassword,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      toast.success(response.data.message || "Password changed successfully");
+
+      setFormData({
+        oldPassword: "",
+        newPassword: "",
+      });
+
+      setOpen(false);
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || "Something went wrong");
+    }
+  };
 
   const fetchProfile = async () => {
     try {
       const data = await getLoggedInUserProfile();
-      setUser(data);
+      setProfileUser(data);
     } catch (error) {
       console.error("Failed to fetch profile", error);
+      toast.error("Failed to fetch profile");
     } finally {
       setLoading(false);
     }
@@ -59,6 +142,11 @@ export default function SrStaffProfile() {
     return "L1-Staff";
   };
 
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/");
+  };
+
   if (loading) {
     return (
       <div className="w-full bg-[#FBF8FF] p-8 min-h-screen">
@@ -73,36 +161,93 @@ export default function SrStaffProfile() {
         <div className="col-span-3">
           <div className="bg-white border border-gray-200 rounded-xl p-6 text-center shadow-sm">
             <div className="relative w-24 h-24 mx-auto mb-4">
-              {/*  connect S3 profile image API here */}
               <img
                 src="https://api.dicebear.com/7.x/adventurer/svg?seed=senior-staff"
+                alt="Senior staff profile"
                 className="w-24 h-24 rounded-lg border object-cover"
               />
 
-              <button className="absolute bottom-0 right-0 w-7 h-7 bg-[#1E40AF] text-white rounded-md text-xs"></button>
-              {/* api change password */}
+              <button
+                type="button"
+                className="absolute bottom-0 right-0 w-7 h-7 bg-[#1E40AF] text-white rounded-md text-xs"
+              />
             </div>
 
             <h2 className="font-bold text-2xl text-gray-900">
-              {user?.name ?? "Senior Staff"}
+              {profileUser?.name ?? "Senior Staff"}
             </h2>
 
             <span className="inline-block mt-2 text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded">
-              {user?.role ?? "SENIOR_STAFF"}
+              {profileUser?.role ?? "SENIOR_STAFF"}
             </span>
 
             <Button className="w-full mt-6 bg-[#1E40AF] hover:bg-blue-800 text-white">
-              Edit Profile
+              Upload image
             </Button>
+
+            <Dialog open={open} onOpenChange={setOpen}>
+              <DialogTrigger asChild>
+                <Button className="w-full mt-3 text-white bg-[#1E40AF] hover:bg-[#18379c]">
+                  <KeyRound className="mr-2 h-4 w-4" />
+                  Change Password
+                </Button>
+              </DialogTrigger>
+
+              <DialogContent className="sm:max-w-[425px] rounded-2xl bg-[#F8FAFF] border border-[#E2E8F0]">
+                <DialogHeader>
+                  <DialogTitle>Change Password</DialogTitle>
+
+                  <DialogDescription>
+                    Enter your old and new password below.
+                  </DialogDescription>
+                </DialogHeader>
+
+                <div className="grid gap-5 py-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="oldPassword">Old Password</Label>
+
+                    <Input
+                      id="oldPassword"
+                      type="password"
+                      name="oldPassword"
+                      placeholder="Enter old password"
+                      value={formData.oldPassword}
+                      onChange={handleChange}
+                    />
+                  </div>
+
+                  <div className="grid gap-2">
+                    <Label htmlFor="newPassword">New Password</Label>
+
+                    <Input
+                      id="newPassword"
+                      type="password"
+                      name="newPassword"
+                      placeholder="Enter new password"
+                      value={formData.newPassword}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </div>
+
+                <DialogFooter>
+                  <Button
+                    className="text-white bg-[#1E40AF] hover:bg-[#18379c]"
+                    onClick={handleChangePassword}
+                  >
+                    Update Password
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
 
             <Button
               variant="outline"
-              className="w-full mt-3"
-              onClick={() => {
-                //api-change password
-              }}
+              className="w-full mt-3 hover:bg-red-500 hover:text-white hover:border-red-500 transition-all duration-200"
+              onClick={handleLogout}
             >
-              Change Password
+              <LogOut className="mr-2 h-4 w-4" />
+              Logout
             </Button>
           </div>
 
@@ -119,7 +264,7 @@ export default function SrStaffProfile() {
                 Access Level
               </p>
               <p className="text-lg font-bold text-blue-600">
-                {formatAccessLevel(user?.role)}
+                {formatAccessLevel(profileUser?.role)}
               </p>
             </div>
           </div>
@@ -131,6 +276,7 @@ export default function SrStaffProfile() {
               <h3 className="font-bold text-lg text-gray-900">
                 Employee Information
               </h3>
+
               <p className="text-sm text-gray-500 mt-1">
                 Read-only operational identity records.
               </p>
@@ -142,7 +288,7 @@ export default function SrStaffProfile() {
                   Full Name
                 </p>
                 <p className="font-bold text-gray-800 mt-2">
-                  {user?.name ?? "Not available"}
+                  {profileUser?.name ?? "Not available"}
                 </p>
               </div>
 
@@ -151,7 +297,7 @@ export default function SrStaffProfile() {
                   Official Email
                 </p>
                 <p className="font-bold text-gray-800 mt-2">
-                  {user?.email ?? "Not available"}
+                  {profileUser?.email ?? "Not available"}
                 </p>
               </div>
 
@@ -160,7 +306,7 @@ export default function SrStaffProfile() {
                   Primary Role
                 </p>
                 <p className="font-bold text-gray-800 mt-2">
-                  {formatRole(user?.role)}
+                  {formatRole(profileUser?.role)}
                 </p>
               </div>
 
@@ -169,8 +315,8 @@ export default function SrStaffProfile() {
                   Assigned Ward
                 </p>
                 <p className="font-bold text-gray-800 mt-2">
-                  {user?.ward
-                    ? `${user.ward.name} - ${user.ward.type}`
+                  {profileUser?.ward
+                    ? `${profileUser.ward.name} - ${profileUser.ward.type}`
                     : "No ward assigned"}
                 </p>
               </div>
@@ -187,12 +333,15 @@ export default function SrStaffProfile() {
                   Joined Date
                 </p>
                 <p className="font-bold text-gray-800 mt-2">
-                  {user?.created_at
-                    ? new Date(user.created_at).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })
+                  {profileUser?.created_at
+                    ? new Date(profileUser.created_at).toLocaleDateString(
+                        "en-US",
+                        {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        },
+                      )
                     : "Not available"}
                 </p>
               </div>
@@ -206,7 +355,10 @@ export default function SrStaffProfile() {
                   Recent Activity
                 </h3>
 
-                <button className="text-xs font-semibold text-blue-600">
+                <button
+                  type="button"
+                  className="text-xs font-semibold text-blue-600"
+                >
                   View full logs
                 </button>
               </div>

@@ -48,7 +48,7 @@ export default function Navbar({ setOpen }: NavbarProps) {
 
         <NavLink to="/sr-staff/profile">
           <Avatar className="w-8 h-8 md:w-9 md:h-9 cursor-pointer">
-            <AvatarImage src="" />
+            <AvatarImage src="https://api.dicebear.com/7.x/adventurer/svg?seed=senior-staff" />
             <AvatarFallback>U</AvatarFallback>
           </Avatar>
         </NavLink>
