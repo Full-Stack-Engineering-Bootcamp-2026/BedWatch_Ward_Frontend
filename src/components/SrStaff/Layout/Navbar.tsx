@@ -1,4 +1,5 @@
 import React from "react";
+import { useState } from "react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -6,12 +7,13 @@ import { Button } from "@/components/ui/button";
 import { HelpCircle, Menu } from "lucide-react";
 import { MdOutlineBed } from "react-icons/md";
 import { NavLink } from "react-router-dom";
+import AboutSrStaffModal from "@/components/SrStaff/component/AboutSrStaff";
 
-type NavbarProps = {
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-};
+type NavbarProps = { setOpen: React.Dispatch<React.SetStateAction<boolean>> };
 
 export default function Navbar({ setOpen }: NavbarProps) {
+  const [aboutOpen, setAboutOpen] = useState(false);
+
   return (
     <header className="sticky top-0 z-[40] min-h-[60px] border-b bg-white flex items-center justify-between px-4 md:px-6 py-3">
       <div className="flex items-center gap-3 lg:hidden">
@@ -44,7 +46,10 @@ export default function Navbar({ setOpen }: NavbarProps) {
       </nav>
 
       <div className="flex items-center gap-3">
-        <HelpCircle className="w-5 h-5 text-gray-500 cursor-pointer" />
+        <HelpCircle
+          onClick={() => setAboutOpen(true)}
+          className="w-5 h-5 text-gray-500 cursor-pointer hover:text-[#1E40AF] transition-colors"
+        />
 
         <NavLink to="/sr-staff/profile">
           <Avatar className="w-8 h-8 md:w-9 md:h-9 cursor-pointer">
@@ -52,6 +57,8 @@ export default function Navbar({ setOpen }: NavbarProps) {
             <AvatarFallback>U</AvatarFallback>
           </Avatar>
         </NavLink>
+
+        <AboutSrStaffModal open={aboutOpen} onOpenChange={setAboutOpen} />
       </div>
     </header>
   );
