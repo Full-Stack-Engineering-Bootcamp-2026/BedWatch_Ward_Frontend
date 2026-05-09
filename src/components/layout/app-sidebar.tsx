@@ -30,7 +30,7 @@ const menu = [
   {
     name: "Dashboard",
     icon: MdOutlineDashboard,
-    path: "/staff/dashboard",
+    path: "/staff-dashboard",
   },
 
   {
