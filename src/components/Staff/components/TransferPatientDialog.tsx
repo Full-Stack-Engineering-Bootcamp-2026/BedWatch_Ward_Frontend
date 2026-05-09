@@ -1,273 +1,329 @@
+import { useEffect, useState } from "react";
+
+import axios from "axios";
+
+import { useSelector } from "react-redux";
+
+import type { RootState } from "@/store/store";
+
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 
 import { Button } from "@/components/ui/button";
 
-import { Textarea } from "@/components/ui/textarea";
+import { Building2, BedDouble } from "lucide-react";
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+const BASE_URL = "http://localhost:3000/api/v1";
 
-import {
-  BedDouble,
-  Building2,
-} from "lucide-react";
+type Ward = {
+  id: number;
 
-import {
-  useEffect,
-  useState,
-} from "react";
+  name: string;
 
-import { createTransferRequest,fetchWards,CreateTransferPayload } from "../transfer/patientTransferservice";
+  type: string;
+
+  capacity: number;
+
+  description: string;
+
+  created_at: string;
+
+  updated_at: string;
+};
 
 interface Props {
-  children: React.ReactNode;
+  open: boolean;
 
-  transferPatient?: {
-    patientId: number;
+  onOpenChange: (open: boolean) => void;
 
-    currentBedId: number;
+  patientId: number;
 
-    currentWardId: number;
+  patientName: string;
 
-    name: string;
+  currentWardId: number;
 
-    ward: string;
+  currentWardName: string;
 
-    bed: string;
-  };
+  currentBedId: number;
+
+  currentBedNumber: string;
 }
 
 export default function TransferPatientDialog({
-  children,
-  transferPatient,
+  open,
+  onOpenChange,
+  patientId,
+  patientName,
+  currentWardId,
+  currentWardName,
+  currentBedId,
+  currentBedNumber,
 }: Props) {
-  const [wards, setWards] =
-    useState<any[]>([]);
+  const token = useSelector((state: RootState) => state.auth.token);
 
-  const [selectedWard, setSelectedWard] =
-    useState("");
+  const [wards, setWards] = useState<Ward[]>([]);
 
-  const [reason, setReason] =
-    useState("");
+  const [destinationWardId, setDestinationWardId] = useState("");
 
-  const [loading, setLoading] =
-    useState(false);
+  const [availableBeds, setAvailableBeds] = useState<any[]>([]);
 
-  const loadWards =
-    async (): Promise<void> => {
-      try {
-        const data =
-          await fetchWards();
+  const [selectedBedId, setSelectedBedId] = useState("");
 
-        setWards(data);
-      } catch (error) {
-        console.log(error);
+  const [loading, setLoading] = useState(false);
+
+  const loadWards = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/wards/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.data.success) {
+        setWards(response.data.data);
       }
-    };
+    } catch (error) {
+      console.log("WARD FETCH ERROR:", error);
+    }
+  };
+
+  const loadAvailableBeds = async (wardId: string) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/beds/available?wardId=${wardId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      console.log("AVAILABLE BEDS:", response.data);
+
+      if (response.data.success) {
+        setAvailableBeds(response.data.data);
+      }
+    } catch (error) {
+      console.log("AVAILABLE BED ERROR:", error);
+    }
+  };
 
   useEffect(() => {
-    void loadWards();
-  }, []);
+    if (open && token) {
+      loadWards();
+    }
+  }, [open, token]);
 
-  const handleTransfer =
-    async () => {
-      if (!transferPatient)
-        return;
+  const handleTransfer = async () => {
+    if (!destinationWardId) {
+      alert("Please select destination ward");
 
-      try {
-        setLoading(true);
+      return;
+    }
 
-        const payload: CreateTransferPayload =
-          {
-            patientId:
-              transferPatient.patientId,
+    if (!selectedBedId) {
+      alert("Please select available bed");
 
-            currentBedId:
-              transferPatient.currentBedId,
+      return;
+    }
 
-            currentWardId:
-              transferPatient.currentWardId,
+    try {
+      setLoading(true);
 
-            destinationWardId:
-              Number(
-                selectedWard,
-              ),
-          };
+      const selectedBed = availableBeds.find(
+        (bed: any) => bed.id === Number(selectedBedId),
+      );
 
-        console.log(
-          "TRANSFER PAYLOAD",
-          payload,
-        );
+      console.log({
+        patientId,
 
-        await createTransferRequest(
-          payload,
-        );
+        fromBedNumber: currentBedNumber,
 
-        alert(
-          "Transfer request submitted successfully",
-        );
+        toBedNumber: selectedBed?.bed_number,
+      });
 
-        setSelectedWard("");
-        setReason("");
-      } catch (error) {
-        console.log(error);
+      await axios.post(
+        `${BASE_URL}/transfers`,
+        {
+          patientId,
 
-        alert(
-          "Failed to submit request",
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
+          fromBedNumber: currentBedNumber,
+
+          toBedNumber: selectedBed?.bed_number,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      alert("Transfer request submitted successfully");
+
+      onOpenChange(false);
+
+      setDestinationWardId("");
+
+      setSelectedBedId("");
+
+      setAvailableBeds([]);
+    } catch (error: any) {
+      console.log("TRANSFER ERROR:", error.response?.data);
+
+      alert(
+        error.response?.data?.message || "Failed to submit transfer request",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        {children}
-      </DialogTrigger>
-
-      <DialogContent className="sm:max-w-2xl p-0 bg-white overflow-hidden">
-        <DialogHeader className="border-b px-6 py-5">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-2xl bg-white border border-slate-200 rounded-3xl p-0 shadow-2xl">
+        {/* HEADER */}
+        <DialogHeader className="px-8 py-6 border-b border-slate-100 bg-white">
           <div>
-            <p className="text-xs uppercase tracking-[2px] text-[#00288E] font-semibold">
-              Patient Movement
+            <p className="text-xs uppercase tracking-[0.2em] text-blue-600 font-semibold mb-2">
+              Patient Transfer
             </p>
 
-            <DialogTitle className="text-3xl font-bold mt-2">
-              Transfer{" "}
-              {
-                transferPatient?.name
-              }
+            <DialogTitle className="text-3xl font-bold text-slate-900">
+              Transfer {patientName}
             </DialogTitle>
+
+            <p className="text-sm text-slate-500 mt-2">
+              Create patient transfer request.
+            </p>
           </div>
         </DialogHeader>
 
-        <div className="p-6 space-y-6">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="text-xs uppercase text-slate-500 font-semibold">
+        {/* BODY */}
+        <div className="p-8 space-y-6 bg-white">
+          {/* CURRENT INFO */}
+          <div className="grid grid-cols-2 gap-5">
+            {/* CURRENT WARD */}
+            <div className="border border-slate-200 rounded-2xl p-5 bg-slate-50">
+              <p className="text-xs uppercase tracking-wide text-slate-400 font-semibold mb-3">
                 Current Ward
-              </label>
+              </p>
 
-              <div className="mt-2 border rounded-lg h-12 px-4 flex items-center gap-3 bg-slate-50">
-                <Building2 className="w-4 h-4 text-[#00288E]" />
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-xl bg-blue-100 flex items-center justify-center">
+                  <Building2 className="w-5 h-5 text-blue-600" />
+                </div>
 
-                <span className="text-sm">
-                  {
-                    transferPatient?.ward
-                  }
-                </span>
+                <div>
+                  <p className="font-semibold text-slate-800">
+                    {currentWardName}
+                  </p>
+                </div>
               </div>
             </div>
 
-            <div>
-              <label className="text-xs uppercase text-slate-500 font-semibold">
+            {/* CURRENT BED */}
+            <div className="border border-slate-200 rounded-2xl p-5 bg-slate-50">
+              <p className="text-xs uppercase tracking-wide text-slate-400 font-semibold mb-3">
                 Current Bed
-              </label>
+              </p>
 
-              <div className="mt-2 border rounded-lg h-12 px-4 flex items-center gap-3 bg-slate-50">
-                <BedDouble className="w-4 h-4 text-[#00288E]" />
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-xl bg-blue-100 flex items-center justify-center">
+                  <BedDouble className="w-5 h-5 text-blue-600" />
+                </div>
 
-                <span className="text-sm">
-                  Bed{" "}
-                  {
-                    transferPatient?.bed
-                  }
-                </span>
+                <div>
+                  <p className="font-semibold text-slate-800">
+                    {currentBedNumber}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
 
-          <div>
-            <label className="text-xs uppercase text-slate-500 font-semibold">
+          {/* DESTINATION WARD */}
+          <div className="space-y-3">
+            <label className="text-xs uppercase tracking-wide text-slate-500 font-semibold">
               Destination Ward
             </label>
 
-            <Select
-              value={selectedWard}
-              onValueChange={(
-                value,
-              ) => {
-                setSelectedWard(
-                  value,
-                );
-              }}
-            >
-              <SelectTrigger className="mt-2 h-12 bg-white w-full">
-                <SelectValue placeholder="Select ward" />
-              </SelectTrigger>
+            <div className="relative">
+              <select
+                value={destinationWardId}
+                onChange={(e) => {
+                  const wardId = e.target.value;
 
-              <SelectContent className="bg-white">
-                {wards.map(
-                  (
-                    ward: any,
-                  ) => (
-                    <SelectItem
-                      key={
-                        ward.id
-                      }
-                      value={String(
-                        ward.id,
-                      )}
-                    >
-                      {
-                        ward.name
-                      }
-                    </SelectItem>
-                  ),
-                )}
-              </SelectContent>
-            </Select>
+                  setDestinationWardId(wardId);
+
+                  setSelectedBedId("");
+
+                  loadAvailableBeds(wardId);
+                }}
+                className="w-full h-14 rounded-2xl border border-slate-200 bg-white px-4 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
+              >
+                <option value="">Select destination ward</option>
+
+                {wards.map((ward) => (
+                  <option key={ward.id} value={String(ward.id)}>
+                    {ward.name}
+                  </option>
+                ))}
+              </select>
+
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                ▼
+              </div>
+            </div>
           </div>
 
-          <div>
-            <label className="text-xs uppercase text-slate-500 font-semibold">
-              Transfer Reason
+          {/* AVAILABLE BEDS */}
+          <div className="space-y-3">
+            <label className="text-xs uppercase tracking-wide text-slate-500 font-semibold">
+              Available Beds
             </label>
 
-            <Textarea
-              value={reason}
-              onChange={(e) =>
-                setReason(
-                  e.target
-                    .value,
-                )
-              }
-              className="mt-2 min-h-[120px]"
-              placeholder="Specify clinical necessity for transfer..."
-            />
+            <div className="relative">
+              <select
+                value={selectedBedId}
+                onChange={(e) => setSelectedBedId(e.target.value)}
+                className="w-full h-14 rounded-2xl border border-slate-200 bg-white px-4 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
+              >
+                <option value="">Select available bed</option>
+
+                {availableBeds.map((bed: any) => (
+                  <option key={bed.id} value={bed.id}>
+                    {bed.bed_number}
+                  </option>
+                ))}
+              </select>
+
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                ▼
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="border-t bg-slate-50 px-6 py-4 flex items-center justify-between">
-          <Button variant="ghost">
+        {/* FOOTER */}
+        <div className="px-8 py-5 border-t border-slate-100 bg-white flex items-center justify-between">
+          <Button
+            variant="ghost"
+            onClick={() => onOpenChange(false)}
+            className="rounded-xl"
+          >
             Cancel
           </Button>
 
           <Button
-            disabled={
-              !selectedWard ||
-              loading
-            }
-            onClick={
-              handleTransfer
-            }
-            className="text-white bg-[#00288E] hover:bg-[#001d66]"
+            onClick={handleTransfer}
+            disabled={loading || !destinationWardId || !selectedBedId}
+            className="bg-blue-600 hover:bg-blue-700 rounded-xl px-6"
           >
-            {loading
-              ? "Submitting..."
-              : "Submit Transfer Request"}
+            {loading ? "Submitting..." : "Submit Transfer Request"}
           </Button>
         </div>
       </DialogContent>
