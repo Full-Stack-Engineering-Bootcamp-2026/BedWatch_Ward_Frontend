@@ -7,6 +7,7 @@ import { HelpCircle, Menu } from "lucide-react";
 import { MdOutlineBed } from "react-icons/md";
 import { NavLink } from "react-router-dom";
 
+import { Link } from "react-router-dom";
 type NavbarProps = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
@@ -40,13 +41,20 @@ export default function Navbar({ setOpen }: NavbarProps) {
       </div>
 
       <nav className="hidden xl:flex items-center gap-6 text-sm text-gray-600">
-        <span className="cursor-pointer hover:text-black">Ward View</span>
+        <Link to="/Wardview" className="cursor-pointer hover:text-black">
+          Ward View
+        </Link>
 
-        <span className="cursor-pointer hover:text-black">Staffing</span>
+        <Link to="/Systemadmin" className="cursor-pointer hover:text-black">
+          Staffing
+        </Link>
 
-        <span className="cursor-pointer hover:text-black">Resource Map</span>
-
-        <span className="cursor-pointer hover:text-black">Reports</span>
+        <Link
+          to="/admin-occupancyChart"
+          className="cursor-pointer hover:text-black"
+        >
+          Reports
+        </Link>
       </nav>
 
       <div className="flex items-center gap-3">
@@ -54,7 +62,7 @@ export default function Navbar({ setOpen }: NavbarProps) {
 
         <NavLink to="/admin-profile">
           <Avatar className="w-8 h-8 md:w-9 md:h-9 cursor-pointer">
-            <AvatarImage src="" />
+            <AvatarImage src="https://png.pngtree.com/background/20250106/original/pngtree-a-hackers-use-computer-picture-image_15824759.jpg" />
             <AvatarFallback>U</AvatarFallback>
           </Avatar>
         </NavLink>

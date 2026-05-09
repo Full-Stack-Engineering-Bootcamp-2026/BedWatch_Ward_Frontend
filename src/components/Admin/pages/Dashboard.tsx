@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import { FaHospital, FaRegUserCircle, FaUserPlus, FaBed } from "react-icons/fa";
-
+import { useSelector } from "react-redux";
 import { FaArrowRightArrowLeft } from "react-icons/fa6";
 import { MdPieChartOutline } from "react-icons/md";
 
@@ -27,6 +27,7 @@ type WardSummary = {
 };
 
 function Dashboard() {
+  const token = useSelector((state: any) => state.auth.token);
   const [dashboardStats, setDashboardStats] = useState({
     totalWards: 0,
     totalBeds: 0,
@@ -38,6 +39,11 @@ function Dashboard() {
     try {
       const response = await axios.get(
         "http://localhost:3000/api/v1/wards/summary",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
 
       const wards = response.data.data;

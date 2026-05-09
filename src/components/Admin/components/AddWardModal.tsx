@@ -15,7 +15,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-
+import { useSelector } from "react-redux";
 type AddWardModalProps = {
   children: React.ReactNode;
 };
@@ -33,7 +33,7 @@ type WardFormData = z.infer<typeof wardSchema>;
 
 const AddWardModal = ({ children }: AddWardModalProps) => {
   const [open, setOpen] = useState(false);
-
+  const token = useSelector((state: any) => state.auth.token);
   const navigate = useNavigate();
 
   const {
@@ -50,6 +50,11 @@ const AddWardModal = ({ children }: AddWardModalProps) => {
       const res = await axios.post(
         "http://localhost:3000/api/v1/wards/create",
         data,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
 
       reset();

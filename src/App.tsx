@@ -16,25 +16,39 @@ import SrStaffRoute from "./components/SrStaff/Layout/Layout";
 import SrStaffProfile from "./components/SrStaff/SrStaff.profile";
 import SrStaffAllWards from "./components/SrStaff/AllWards";
 import ViewTransferReq from "./components/SrStaff/ViewPending";
+import OperationalReports from "./components/Admin/pages/OperationalReports";
+import AdminProtectedRoute from "./components/protected/AdminProtectedRoute";
+import SrStaffProtectedRoute from "./components/protected/SrStaffProtectedRoute";
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login />} />
 
-        <Route element={<AdminLayout />}>
-          <Route path="/admin-dashboard" element={<Dashboard />} />
+        <Route element={<AdminProtectedRoute />}>
+          <Route element={<AdminLayout />}>
+            <Route path="/admin-dashboard" element={<Dashboard />} />
+            <Route path="/Wardview" element={<WardManagement />} />
+            <Route path="/Systemadmin" element={<StaffManagement />} />
+            <Route path="/admin-profile" element={<AdminProfile />} />
+            <Route
+              path="/admin-occupancyChart"
+              element={<OperationalReports />}
+            />
+          </Route>
         </Route>
 
-        <Route element={<SrStaffRoute />}>
-          <Route path="/sr-staff/dashboard" element={<SrStaffDashboard />} />
-          <Route path="/sr-staff/transfers" element={<TransfersList />} />
-          <Route path="/sr-staff/profile" element={<SrStaffProfile />} />
-          <Route path="/sr-staff/AllWards" element={<SrStaffAllWards />} />
-          <Route path="/sr-staff/ViewPending" element={<ViewTransferReq />} />
+        <Route element={<SrStaffProtectedRoute />}>
+          <Route element={<SrStaffRoute />}>
+            <Route path="/sr-staff/dashboard" element={<SrStaffDashboard />} />
+            <Route path="/sr-staff/transfers" element={<TransfersList />} />
+            <Route path="/sr-staff/profile" element={<SrStaffProfile />} />
+            <Route path="/sr-staff/AllWards" element={<SrStaffAllWards />} />
+            <Route path="/sr-staff/ViewPending" element={<ViewTransferReq />} />
+          </Route>
         </Route>
 
-        <Route path="forgot-password" element={<ForgotPasswordEmail />} />
+        <Route path="/forgot-password" element={<ForgotPasswordEmail />} />
         <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
     </BrowserRouter>

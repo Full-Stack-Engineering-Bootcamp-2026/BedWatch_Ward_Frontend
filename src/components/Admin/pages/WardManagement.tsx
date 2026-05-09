@@ -31,7 +31,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
+import { useSelector } from "react-redux";
 import {
   Pagination,
   PaginationContent,
@@ -63,6 +63,7 @@ type BedType = {
 };
 
 function WardManagement() {
+  const token = useSelector((state: any) => state.auth.token);
   const [wards, setWards] = useState<WardType[]>([]);
 
   const [beds, setBeds] = useState<BedType[]>([]);
@@ -79,6 +80,11 @@ function WardManagement() {
     try {
       const response = await axios.get(
         "http://localhost:3000/api/v1/wardsAdmin/summary",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
 
       setWards(response.data.data);
@@ -97,8 +103,12 @@ function WardManagement() {
 
       const response = await axios.get(
         `http://localhost:3000/api/v1/wardsAdmin/${wardId}/beds`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
-
       setBeds(response.data.data);
     } catch (error) {
       console.log(error);

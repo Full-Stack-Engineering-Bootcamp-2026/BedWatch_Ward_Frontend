@@ -8,7 +8,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import axios from "axios";
-
+import { useSelector } from "react-redux";
 type Ward = {
   id: number;
   name: string;
@@ -28,7 +28,11 @@ const WardTable = () => {
   useEffect(() => {
     const fetchWards = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/v1/wards");
+        const response = await axios.get("http://localhost:3000/api/v1/wards", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         setWards(response.data.data);
       } catch (error) {
@@ -40,7 +44,7 @@ const WardTable = () => {
   }, []);
 
   const totalPages = Math.ceil(wards.length / rowsPerPage);
-
+  const token = useSelector((state: any) => state.auth.token);
   const startIndex = (currentPage - 1) * rowsPerPage;
 
   const currentData = wards.slice(startIndex, startIndex + rowsPerPage);

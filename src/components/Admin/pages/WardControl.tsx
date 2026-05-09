@@ -12,6 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useSelector } from "react-redux";
 
 import EditWardModal from "../components/EditWardModal";
 
@@ -25,6 +26,7 @@ type WardType = {
 };
 
 function WardControl() {
+  const token = useSelector((state: any) => state.auth.token);
   const [wards, setWards] = useState<WardType[]>([]);
 
   const [loading, setLoading] = useState(false);
@@ -35,6 +37,11 @@ function WardControl() {
 
       const response = await axios.get(
         "http://localhost:3000/api/v1/wardsAdmin",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
 
       setWards(response.data.data);
@@ -55,6 +62,11 @@ function WardControl() {
         `http://localhost:3000/api/v1/wardsAdmin/${updatedWard.id}`,
         {
           capacity: updatedWard.capacity,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
       );
 
@@ -77,8 +89,11 @@ function WardControl() {
 
   const handleDelete = async (id: number) => {
     try {
-      await axios.delete(`http://localhost:3000/api/v1/wardsAdmin/${id}`);
-
+      await axios.delete(`http://localhost:3000/api/v1/wardsAdmin/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setWards((prev) => prev.filter((ward) => ward.id !== id));
     } catch (error) {
       console.log(error);

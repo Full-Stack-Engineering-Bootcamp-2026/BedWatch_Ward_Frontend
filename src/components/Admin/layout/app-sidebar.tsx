@@ -7,7 +7,7 @@ import { MdOutlineDashboard, MdOutlineBed } from "react-icons/md";
 import { LiaUserShieldSolid } from "react-icons/lia";
 
 import AddStaffModal from "../components/AddStaffModal";
-import { FaBuildingShield } from "react-icons/fa6";
+import { FaChartPie } from "react-icons/fa";
 
 type SidebarProps = {
   open: boolean;
@@ -24,6 +24,11 @@ const menu = [
     name: "Ward View",
     icon: MdOutlineBed,
     path: "/Wardview",
+  },
+  {
+    name: "Occupancy Chart",
+    icon: FaChartPie,
+    path: "/admin-occupancyChart",
   },
   {
     name: "System Admin",
