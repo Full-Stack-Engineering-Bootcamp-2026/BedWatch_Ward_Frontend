@@ -13,6 +13,7 @@ import {
   approveTransfer,
   rejectTransfer,
 } from "@/services/srStaffTransfer.service";
+import { toast } from "react-toastify";
 
 type Transfer = {
   id: number;
@@ -140,6 +141,13 @@ export default function TransferRequestsPage() {
 
       fetchTransfers();
     } catch (error) {
+      const message = error?.response?.data?.message;
+
+      if (message === "Active admission not found") {
+        toast.error("No active admission exists for this patient");
+      } else {
+        toast.error("Bed already occupied, please reject the request");
+      }
       console.error(error);
     }
   };

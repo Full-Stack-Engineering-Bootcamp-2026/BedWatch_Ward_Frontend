@@ -13,6 +13,7 @@ import {
   approveTransfer,
   rejectTransfer,
 } from "@/services/srStaffTransfer.service";
+import { toast } from "react-toastify";
 
 type Transfer = {
   id: number;
@@ -102,7 +103,7 @@ export default function TransfersList() {
         data = await getTransfers();
       } else if (activeTab === "Pending") {
         data = await getPendingTransfers();
-      } else if (activeTab === "Completed") {
+      } else if (activeTab === "Approved") {
         data = await getCompletedTransfers();
       } else if (activeTab === "Cancelled") {
         data = await getRejectedTransfers();
@@ -179,6 +180,7 @@ export default function TransfersList() {
 
       fetchTransfers();
     } catch (error) {
+      toast.error("Bed already occupied, please reject the request");
       console.error(error);
     }
   };
