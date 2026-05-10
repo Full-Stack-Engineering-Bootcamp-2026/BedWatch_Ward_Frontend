@@ -32,7 +32,7 @@
 
 import { useState } from "react";
 
-import { SidebarProvider } from "../ui/sidebar";
+import { SidebarProvider } from "../../ui/sidebar";
 
 import AppSidebar from "./app-sidebar";
 

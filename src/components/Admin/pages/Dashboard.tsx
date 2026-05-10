@@ -14,6 +14,7 @@ import ActionCard from "../components/ActionCard";
 import ReportCard from "../components/ReportCard";
 import AddWardModal from "../components/AddWardModal";
 import AddStaffModal from "../components/AddStaffModal";
+import { useNavigate } from "react-router-dom";
 
 type WardSummary = {
   id: number;
@@ -27,6 +28,7 @@ type WardSummary = {
 };
 
 function Dashboard() {
+  const navigate = useNavigate();
   const token = useSelector((state: any) => state.auth.token);
   const [dashboardStats, setDashboardStats] = useState({
     totalWards: 0,
@@ -148,7 +150,10 @@ function Dashboard() {
               </AddStaffModal>
             </div>
 
-            <div className="h-full">
+            <div
+              className="h-full"
+              onClick={() => navigate("/admin-occupancyChart")}
+            >
               <ReportCard />
             </div>
           </div>

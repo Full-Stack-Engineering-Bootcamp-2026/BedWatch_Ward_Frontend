@@ -19,6 +19,10 @@ import ViewTransferReq from "./components/SrStaff/ViewPending";
 import OperationalReports from "./components/Admin/pages/OperationalReports";
 import AdminProtectedRoute from "./components/protected/AdminProtectedRoute";
 import SrStaffProtectedRoute from "./components/protected/SrStaffProtectedRoute";
+import StaffLayout from "./components/Staff/layout/Layout";
+import StaffDashboard from "./components/Staff/Pages/StaffDashboard";
+import NewAdmissionPage from "./components/Staff/Pages/NewAdmission";
+import DischargePatientsPage from "./components/Staff/Pages/DischargePatient";
 function App() {
   return (
     <BrowserRouter>
@@ -46,6 +50,14 @@ function App() {
             <Route path="/sr-staff/AllWards" element={<SrStaffAllWards />} />
             <Route path="/sr-staff/ViewPending" element={<ViewTransferReq />} />
           </Route>
+        </Route>
+
+        <Route element={<StaffLayout />}>
+          <Route path="/staff-dashboard" element={<StaffDashboard />} />
+
+          <Route path="/staff/admit" element={<NewAdmissionPage />} />
+
+          <Route path="/staff/discharge" element={<DischargePatientsPage />} />
         </Route>
 
         <Route path="/forgot-password" element={<ForgotPasswordEmail />} />

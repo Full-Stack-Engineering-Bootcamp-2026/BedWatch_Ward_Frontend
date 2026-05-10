@@ -147,7 +147,7 @@ export default function TransferPatientDialog({
       });
 
       await axios.post(
-        `${BASE_URL}/transfers`,
+        `${BASE_URL}/staff/transfers`,
         {
           patientId,
 
