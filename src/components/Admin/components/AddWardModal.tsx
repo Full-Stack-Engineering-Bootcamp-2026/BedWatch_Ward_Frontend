@@ -57,11 +57,15 @@ const AddWardModal = ({ children }: AddWardModalProps) => {
         },
       );
 
+      toast.success("Ward created successfully !!!");
+
       reset();
 
       setOpen(false);
-      toast.success("Ward created successfully !!!");
-      window.location.reload();
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
     } catch (error: any) {
       console.error(error);
       toast.error(error?.response?.data?.message || "Something went wrong");

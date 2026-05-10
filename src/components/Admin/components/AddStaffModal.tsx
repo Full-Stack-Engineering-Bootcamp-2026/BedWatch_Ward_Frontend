@@ -118,15 +118,16 @@ function AddStaffModal({ children }: Props) {
         `${data.role} account created and setup email sent successfully`,
       );
 
-      // toast.success("Staff account created successfully");
-
       reset();
       setOpen(false);
-      window.location.reload();
-    } catch (error) {
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+    } catch (error: any) {
       console.error(error);
 
-      toast.error("Failed to create staff");
+      toast.error(error?.response?.data?.message || "Something went wrong");
     }
   };
 
