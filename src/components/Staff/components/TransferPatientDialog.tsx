@@ -5,6 +5,8 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 
 import type { RootState } from "@/store/store";
+import { toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 
 import {
   Dialog,
@@ -58,9 +60,7 @@ export default function TransferPatientDialog({
   onOpenChange,
   patientId,
   patientName,
-  currentWardId,
   currentWardName,
-  currentBedId,
   currentBedNumber,
 }: Props) {
   const token = useSelector((state: RootState) => state.auth.token);
@@ -120,13 +120,13 @@ export default function TransferPatientDialog({
 
   const handleTransfer = async () => {
     if (!destinationWardId) {
-      alert("Please select destination ward");
+      toast.error("Please select destination ward");
 
       return;
     }
 
     if (!selectedBedId) {
-      alert("Please select available bed");
+      toast.error("Please select available bed");
 
       return;
     }
@@ -162,7 +162,7 @@ export default function TransferPatientDialog({
         },
       );
 
-      alert("Transfer request submitted successfully");
+      toast.success("Transfer request submitted successfully");
 
       onOpenChange(false);
 
@@ -174,9 +174,11 @@ export default function TransferPatientDialog({
     } catch (error: any) {
       console.log("TRANSFER ERROR:", error.response?.data);
 
-      alert(
-        error.response?.data?.message || "Failed to submit transfer request",
-      );
+      toast.error(
+  error.response?.data?.message ||
+    "Failed to submit transfer request",
+);
+   
     } finally {
       setLoading(false);
     }
@@ -202,11 +204,11 @@ export default function TransferPatientDialog({
           </div>
         </DialogHeader>
 
-        {/* BODY */}
+    
         <div className="p-8 space-y-6 bg-white">
-          {/* CURRENT INFO */}
+       
           <div className="grid grid-cols-2 gap-5">
-            {/* CURRENT WARD */}
+     
             <div className="border border-slate-200 rounded-2xl p-5 bg-slate-50">
               <p className="text-xs uppercase tracking-wide text-slate-400 font-semibold mb-3">
                 Current Ward
@@ -225,7 +227,7 @@ export default function TransferPatientDialog({
               </div>
             </div>
 
-            {/* CURRENT BED */}
+          
             <div className="border border-slate-200 rounded-2xl p-5 bg-slate-50">
               <p className="text-xs uppercase tracking-wide text-slate-400 font-semibold mb-3">
                 Current Bed
@@ -245,7 +247,7 @@ export default function TransferPatientDialog({
             </div>
           </div>
 
-          {/* DESTINATION WARD */}
+     
           <div className="space-y-3">
             <label className="text-xs uppercase tracking-wide text-slate-500 font-semibold">
               Destination Ward
@@ -280,7 +282,7 @@ export default function TransferPatientDialog({
             </div>
           </div>
 
-          {/* AVAILABLE BEDS */}
+     
           <div className="space-y-3">
             <label className="text-xs uppercase tracking-wide text-slate-500 font-semibold">
               Available Beds
@@ -308,7 +310,6 @@ export default function TransferPatientDialog({
           </div>
         </div>
 
-        {/* FOOTER */}
         <div className="px-8 py-5 border-t border-slate-100 bg-white flex items-center justify-between">
           <Button
             variant="ghost"
