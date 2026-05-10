@@ -1,228 +1,194 @@
-import { useState } from "react";
-
-import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardContent,
+} from "@/components/ui/card";
 
 import { Button } from "@/components/ui/button";
 
+import { Badge } from "@/components/ui/badge";
 
+import type { Bed } from "../pages/DischargePatientsPage";
 
+type Props = {
+  beds: Bed[];
 
+  loading: boolean;
 
-const patients = Array.from({ length: 25 }, (_, index) => ({
-  id: index + 1,
+  dischargingId: number | null;
 
-  name: `Patient ${index + 1}`,
+  handleDischarge: (
+    bedId: number,
+  ) => void;
+};
 
-  bed: `Bed ${index + 1}-A`,
-
-  ward:
-    index % 2 === 0
-      ? "Cardiology"
-      : "Neurology",
-
-  admitted: "Oct 12, 2023",
-
-  status:
-    index % 3 === 0
-      ? "CLEARED"
-      : index % 3 === 1
-      ? "LAB PENDING"
-      : "FINAL REVIEW",
-}));
-
-export default function DischargeTable() {
-  const [currentPage, setCurrentPage] =
-    useState(1);
-
-  const rowsPerPage = 5;
-
-  const totalPages = Math.ceil(
-    patients.length / rowsPerPage
-  );
-
-  const startIndex =
-    (currentPage - 1) * rowsPerPage;
-
-  const currentPatients = patients.slice(
-    startIndex,
-    startIndex + rowsPerPage
-  );
-
-  const getStatusStyle = (status: string) => {
-    switch (status) {
-      case "CLEARED":
-        return "bg-green-100 text-green-700 border-green-200";
-
-      case "LAB PENDING":
-        return "bg-yellow-100 text-yellow-700 border-yellow-200";
-
-      case "FINAL REVIEW":
-        return "bg-blue-100 text-blue-700 border-blue-200";
-
-      default:
-        return "bg-slate-100 text-slate-700 border-slate-200";
-    }
-  };
-
+export default function DischargePatientsTable({
+  beds,
+  loading,
+  dischargingId,
+  handleDischarge,
+}: Props) {
   return (
-    <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-      <table className="w-full">
-        <thead className="bg-slate-50 border-b">
-          <tr className="text-left text-sm text-slate-500">
-            <th className="p-4 font-medium">
-              Patient Name
-            </th>
+    <Card className="border border-slate-200 shadow-sm rounded-2xl overflow-hidden bg-white">
 
-            <th className="font-medium">
-              Bed
-            </th>
+      <CardContent className="p-0 overflow-x-auto">
 
-            <th className="font-medium">
-              Ward
-            </th>
+        <table className="w-full">
 
-            <th className="font-medium">
-              Admitted On
-            </th>
+          <thead className="bg-slate-100 border-b border-slate-200">
 
-            <th className="font-medium">
-              Clinical Status
-            </th>
+            <tr>
 
-            <th className="text-right pr-4 font-medium">
-              Action
-            </th>
-          </tr>
-        </thead>
+              <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wide text-slate-500">
+                Patient
+              </th>
 
-        <tbody>
-          {currentPatients.map((patient) => (
-            <tr
-              key={patient.id}
-              className="border-b last:border-none hover:bg-slate-50 transition"
-            >
-              {/* Patient */}
-              <td className="p-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-blue-100 text-[#00288E] flex items-center justify-center text-sm font-semibold">
-                    {patient.name.charAt(0)}
-                  </div>
+              <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wide text-slate-500">
+                Age
+              </th>
 
-                  <div>
-                    <p className="font-medium text-slate-800">
-                      {patient.name}
-                    </p>
+              <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wide text-slate-500">
+                Diagnosis
+              </th>
 
-                    <p className="text-xs text-slate-400">
-                      ID: 0293-X01
-                    </p>
-                  </div>
-                </div>
-              </td>
+              <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wide text-slate-500">
+                Bed
+              </th>
 
-            
-              <td className="text-sm text-slate-700">
-                {patient.bed}
-              </td>
+              <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wide text-slate-500">
+                Status
+              </th>
 
-         
-              <td className="text-sm text-slate-700">
-                {patient.ward}
-              </td>
+              <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wide text-slate-500">
+                Doctor
+              </th>
 
-      
-              <td className="text-sm text-slate-700">
-                {patient.admitted}
-              </td>
+              <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wide text-slate-500">
+                Admitted At
+              </th>
 
-  
-              <td>
-                <Badge
-                  className={`rounded-md border font-medium px-2 py-1 text-[11px] ${getStatusStyle(
-                    patient.status
-                  )}`}
-                >
-                  {patient.status}
-                </Badge>
-              </td>
+              <th className="px-6 py-4 text-center text-xs font-bold uppercase tracking-wide text-slate-500">
+                Action
+              </th>
 
-      
-              <td className="text-right pr-4">
-<Button
-  disabled={patient.status === "LAB PENDING"}
-  className={`text-white h-10 w-[120px] ${
-    patient.status === "FINAL REVIEW"
-      ? "bg-[#006780] hover:bg-[#00566b]"
-      : patient.status === "LAB PENDING"
-      ? "bg-[#F5F5F5] text-[#B0B0B0] border border-[#E5E5E5] hover:bg-[#F5F5F5] cursor-not-allowed"
-      : "bg-[#00288E] hover:bg-[#18379c]"
-  }`}
->
-  {patient.status === "FINAL REVIEW"
-    ? "Review"
-    : "Discharge"}
-</Button>
-              </td>
             </tr>
-          ))}
-        </tbody>
-      </table>
 
+          </thead>
 
-      <div className="flex items-center justify-between px-4 py-3 border-t bg-white">
-        <p className="text-xs text-slate-500">
-          Showing {startIndex + 1}–
-          {Math.min(
-            startIndex + rowsPerPage,
-            patients.length
-          )}{" "}
-          of {patients.length} Patients
-        </p>
+          <tbody>
 
-        <div className="flex items-center gap-2">
-          {/* Prev */}
-          <button
-            disabled={currentPage === 1}
-            onClick={() =>
-              setCurrentPage((prev) => prev - 1)
-            }
-            className="w-8 h-8 border rounded-md text-slate-500 hover:bg-slate-50 disabled:opacity-40"
-          >
-            ‹
-          </button>
+            {loading ? (
 
-          {Array.from(
-            { length: totalPages },
-            (_, index) => (
-              <button
-                key={index}
-                onClick={() =>
-                  setCurrentPage(index + 1)
-                }
-                className={`w-8 h-8 rounded-md text-sm ${
-                  currentPage === index + 1
-                    ? "bg-[#00288E] text-white"
-                    : "border text-slate-500 hover:bg-slate-50"
-                }`}
-              >
-                {index + 1}
-              </button>
-            )
-          )}
+              <tr>
 
-          <button
-            disabled={
-              currentPage === totalPages
-            }
-            onClick={() =>
-              setCurrentPage((prev) => prev + 1)
-            }
-            className="w-8 h-8 border rounded-md text-slate-500 hover:bg-slate-50 disabled:opacity-40"
-          >
-            ›
-          </button>
-        </div>
-      </div>
-    </div>
+                <td
+                  colSpan={8}
+                  className="text-center py-16 text-slate-500"
+                >
+                  Loading patients...
+                </td>
+
+              </tr>
+
+            ) : beds.length === 0 ? (
+
+              <tr>
+
+                <td
+                  colSpan={8}
+                  className="text-center py-16 text-slate-500"
+                >
+                  No admitted patients found
+                </td>
+
+              </tr>
+
+            ) : (
+
+              beds.map(
+                (bed) => (
+
+                  <tr
+                    key={bed.id}
+                    className="border-b border-slate-100 hover:bg-slate-50 transition"
+                  >
+
+                    <td className="px-6 py-5 font-semibold text-slate-800">
+                      {
+                        bed.patient?.name
+                      }
+                    </td>
+
+                    <td className="px-6 py-5 text-slate-600">
+                      {
+                        bed.patient?.age
+                      }
+                    </td>
+
+                    <td className="px-6 py-5 text-slate-600 max-w-[220px] truncate">
+                      {
+                        bed.patient?.diagnosis
+                      }
+                    </td>
+
+                    <td className="px-6 py-5 text-slate-700 font-medium">
+                      {
+                        bed.bed_number
+                      }
+                    </td>
+
+                    <td className="px-6 py-5">
+
+                      <Badge className="px-3 py-1 rounded-full bg-[#00288E]/10 text-[#00288E] text-xs font-semibold font-['Inter'] border border-[#00288E]/20">
+
+                        {bed.status}
+
+                      </Badge>
+
+                    </td>
+
+                    <td className="px-6 py-5 text-slate-600">
+                      {bed.doctor}
+                    </td>
+
+                    <td className="px-6 py-5 text-slate-600 whitespace-nowrap">
+                      {
+                        bed.patient?.admittedAt
+                      }
+                    </td>
+
+                    <td className="px-6 py-5 text-center">
+
+                      <Button
+                        disabled={
+                          dischargingId ===
+                          bed.id
+                        }
+                        onClick={() =>
+                          handleDischarge(
+                            bed.id,
+                          )
+                        }
+                        className="bg-[#00288E] hover:bg-[#001F6B] text-white font-medium rounded-lg px-4 py-2 font-['Inter']"
+                      >
+                        {dischargingId ===
+                        bed.id
+                          ? "Discharging..."
+                          : "Discharge"}
+                      </Button>
+
+                    </td>
+
+                  </tr>
+                ),
+              )
+            )}
+
+          </tbody>
+
+        </table>
+
+      </CardContent>
+
+    </Card>
   );
 }

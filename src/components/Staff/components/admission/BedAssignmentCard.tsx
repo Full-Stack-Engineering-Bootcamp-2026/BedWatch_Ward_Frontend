@@ -43,7 +43,7 @@ export default function BedAssignmentCard({
 
       <CardContent className="p-5 space-y-5 bg-white">
 
-        {/* Header */}
+      
         <div>
 
           <h2 className="text-lg font-semibold text-slate-800">
@@ -55,7 +55,7 @@ export default function BedAssignmentCard({
           </p>
         </div>
 
-        {/* Assigned Ward */}
+      
         <div className="space-y-2">
 
           <label className="text-sm font-medium text-slate-700">
@@ -69,7 +69,6 @@ export default function BedAssignmentCard({
           </div>
         </div>
 
-        {/* Available Beds */}
         <div className="space-y-2">
 
           <div className="flex items-center justify-between">
@@ -120,7 +119,7 @@ export default function BedAssignmentCard({
           </Select>
         </div>
 
-        {/* Policy */}
+   
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
 
           <div className="flex items-center justify-between mb-2">

@@ -56,10 +56,15 @@ export default function Navbar({ setOpen }: NavbarProps) {
       <div className="flex items-center gap-4">
         <HelpCircle className="w-5 h-5 text-gray-500 cursor-pointer" />
 
-        <Avatar className="w-8 h-8">
-          <AvatarImage src="https://i.pravatar.cc/" />
-          <AvatarFallback></AvatarFallback>
-        </Avatar>
+      <NavLink to="/staff/profile">
+  <Avatar className="w-8 h-8 cursor-pointer border hover:scale-105 transition-all">
+    <AvatarImage src="https://i.pravatar.cc/" />
+
+    <AvatarFallback>
+      Staff
+    </AvatarFallback>
+  </Avatar>
+</NavLink>
       </div>
     </header>
   );

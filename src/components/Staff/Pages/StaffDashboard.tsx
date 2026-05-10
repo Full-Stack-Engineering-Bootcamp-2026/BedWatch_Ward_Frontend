@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 import { useSelector } from "react-redux";
 
@@ -13,8 +13,6 @@ import { GoDownload } from "react-icons/go";
 import axios from "axios";
 
 import { useNavigate } from "react-router-dom";
-
-import { useCallback } from "react";
 
 export default function StaffDashboard() {
   const navigate = useNavigate();
@@ -34,7 +32,13 @@ export default function StaffDashboard() {
         },
       },
     );
-
+    console.log(
+  JSON.stringify(
+    response.data,
+    null,
+    2,
+  ),
+);
     return response.data;
   }, [token]);
 
@@ -69,7 +73,7 @@ export default function StaffDashboard() {
 
     const interval = setInterval(() => {
       fetchDashboard();
-    }, 300000);
+    }, 10000);
 
     return () => clearInterval(interval);
   }, [token, getDashboardData]);

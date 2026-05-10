@@ -41,7 +41,7 @@ export default function PatientDetailsForm({
 
       <div className="space-y-5">
 
-        {/* Full Name */}
+    
         <div>
           <label className="text-sm">
             Full Name
@@ -59,7 +59,7 @@ export default function PatientDetailsForm({
           />
         </div>
 
-        {/* Age + Gender */}
+   
         <div className="grid grid-cols-2 gap-4">
 
           <div>
@@ -117,7 +117,7 @@ export default function PatientDetailsForm({
           </div>
         </div>
 
-        {/* Admission Reason */}
+   
         <div>
           <label className="text-sm">
             Admission Reason
@@ -135,7 +135,7 @@ export default function PatientDetailsForm({
           />
         </div>
 
-        {/* Admitting Doctor */}
+    
         <div>
           <label className="text-sm">
             Admitting Doctor
@@ -152,8 +152,7 @@ export default function PatientDetailsForm({
             }
           />
         </div>
-
-        {/* Notes */}
+  
         <div>
           <label className="text-sm">
             Notes

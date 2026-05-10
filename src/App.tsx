@@ -2,14 +2,14 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Dashboard from "./components/Admin/pages/Dashboard";
 // import ForgotPassword from "./pages/ResetPassword";
-import Layout from "./components/layout/Layout";
+// import Layout from "./components/layout/Layout";
 import SrStaffDashboard from "./components/SrStaff/DashBoard";
 import TransfersList from "./components/SrStaff/InterWardTransfer";
 import AdminLayout from "./components/Admin/layout/Layout";
 import StaffManagement from "./components/Admin/pages/StaffManagement";
 import WardManagement from "./components/Admin/pages/WardManagement";
 import AdminProfile from "./components/Admin/pages/AdminProfile";
-import WardControl from "./components/Admin/pages/WardControl";
+// import WardControl from "./components/Admin/pages/WardControl";
 import ForgotPasswordEmail from "./pages/ForgotPasswordEmail";
 import ResetPassword from "./pages/ResetPassword";
 import SrStaffRoute from "./components/SrStaff/Layout/Layout";
@@ -23,6 +23,10 @@ import StaffLayout from "./components/Staff/layout/Layout";
 import StaffDashboard from "./components/Staff/Pages/StaffDashboard";
 import NewAdmissionPage from "./components/Staff/Pages/NewAdmission";
 import DischargePatientsPage from "./components/Staff/Pages/DischargePatient";
+
+import StaffProtectedRoute from "./components/protected/StaffProtectedRoute";
+import StaffProfile from "./components/Staff/Pages/staffProfilePage";
+
 function App() {
   return (
     <BrowserRouter>
@@ -52,12 +56,19 @@ function App() {
           </Route>
         </Route>
 
-        <Route element={<StaffLayout />}>
-          <Route path="/staff-dashboard" element={<StaffDashboard />} />
+        <Route element={<StaffProtectedRoute />}>
+          <Route element={<StaffLayout />}>
+            <Route path="/staff-dashboard" element={<StaffDashboard />} />
 
-          <Route path="/staff/admit" element={<NewAdmissionPage />} />
+            <Route path="/staff/admit" element={<NewAdmissionPage />} />
 
-          <Route path="/staff/discharge" element={<DischargePatientsPage />} />
+            <Route
+              path="/staff/discharge"
+              element={<DischargePatientsPage />}
+            />
+
+            <Route path="/staff/profile" element={<StaffProfile />} />
+          </Route>
         </Route>
 
         <Route path="/forgot-password" element={<ForgotPasswordEmail />} />
