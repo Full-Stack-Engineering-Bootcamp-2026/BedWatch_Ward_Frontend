@@ -1,73 +1,242 @@
-# React + TypeScript + Vite
+# BedWatch Frontend – Hospital Bed & Resource Management System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Overview
 
-Currently, two official plugins are available:
+BedWatch Frontend is a React + TypeScript based hospital management interface developed for managing hospital beds, patient admissions, discharges, transfers, and ward operations.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+The frontend provides role-based dashboards and workflows for:
 
-## React Compiler
+- Admin
+- Senior Staff
+- Staff
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+The application uses protected routing, reusable UI components, Redux state management, and responsive layouts.
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+# Tech Stack
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- React
+- TypeScript
+- React Router DOM
+- Redux Toolkit
+- Tailwind CSS
+- Axios
+- React Toastify
+- Vite
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+---
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Features
+
+## Authentication
+
+- JWT-based authentication
+- Protected routes
+- Role-based access control
+- Secure navigation
+
+---
+
+## Admin Module
+
+- Dashboard analytics
+- Staff management
+- Ward management
+- Occupancy reports
+- Admin profile management
+
+---
+
+## Senior Staff Module
+
+- Inter-ward transfer management
+- Transfer approval workflow
+- All wards overview
+- Senior staff dashboard
+- Profile management
+
+---
+
+## Staff Module
+
+- Patient admission
+- Patient discharge
+- Bed allocation
+- Bed status management
+- Transfer patient workflow
+- Staff profile management
+
+---
+
+# Folder Structure
+
+```bash
+src/
+│
+├── assets/
+│
+├── components/
+│   │
+│   ├── Admin/
+│   │   ├── components/
+│   │   ├── layout/
+│   │   └── pages/
+│   │
+│   ├── protected/
+│   │   ├── AdminProtectedRoute.tsx
+│   │   ├── SrStaffProtectedRoute.tsx
+│   │   └── StaffProtectedRoute.tsx
+│   │
+│   ├── SrStaff/
+│   │   ├── component/
+│   │   ├── Layout/
+│   │   ├── AllWards.tsx
+│   │   ├── DashBoard.tsx
+│   │   ├── InterWardTransfer.tsx
+│   │   ├── SrStaff.profile.tsx
+│   │   └── ViewPending.tsx
+│   │
+│   └── Staff/
+│       ├── components/
+│       │   ├── BedCard.tsx
+│       │   ├── BedGrid.tsx
+│       │   ├── DischargePatientDialog.tsx
+│       │   ├── DischargePatientTable.tsx
+│       │   ├── DischargeStats.tsx
+│       │   ├── Filterbar.tsx
+│       │   ├── PatientDetailDialog.tsx
+│       │   ├── PatientSearchBar.tsx
+│       │   ├── SummaryCards.tsx
+│       │   └── TransferPatientDialog.tsx
+│       │
+│       ├── layout/
+│       │
+│       ├── Pages/
+│       │   ├── DischargePatient.tsx
+│       │   ├── NewAdmission.tsx
+│       │   ├── StaffDashboard.tsx
+│       │   └── staffProfilePage.tsx
+│       │
+│       └── types/
+│
+├── hooks/
+├── lib/
+├── pages/
+├── services/
+├── store/
+├── ui/
+│
+├── App.tsx
+├── main.tsx
+└── index.css
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+# Route Structure
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Admin Routes
+
+```bash
+/admin-dashboard
+/Wardview
+/Systemadmin
+/admin-profile
+/admin-occupancyChart
 ```
+
+---
+
+## Senior Staff Routes
+
+```bash
+/sr-staff/dashboard
+/sr-staff/transfers
+/sr-staff/profile
+/sr-staff/AllWards
+/sr-staff/ViewPending
+```
+
+---
+
+## Staff Routes
+
+```bash
+/staff-dashboard
+/staff/admit
+/staff/discharge
+/staff/profile
+```
+
+---
+
+# Protected Routes
+
+The application uses role-based protected routes:
+
+- AdminProtectedRoute
+- SrStaffProtectedRoute
+- StaffProtectedRoute
+
+These routes:
+
+- Validate JWT token
+- Check user roles
+- Restrict unauthorized access
+- Redirect invalid users
+
+---
+
+# Installation
+
+## Clone Repository
+
+```bash
+git clone <repository-url>
+```
+
+---
+
+## Install Dependencies
+
+```bash
+npm install
+```
+
+---
+
+## Start Development Server
+
+```bash
+npm run dev
+```
+
+---
+
+# Environment Variables
+
+Create a `.env` file:
+
+```env
+VITE_API_BASE_URL=http://localhost:5173
+```
+
+---
+
+# Project Highlights
+
+- Enterprise-level frontend structure
+- Reusable component architecture
+- Clean folder organization
+- Responsive UI
+- Modular layouts
+- Real-world hospital workflow implementation
+- Role-based dashboards
+- Protected navigation system
+
+---
+
+# Author
+
+Developed as part of the BedWatch Hospital Bed & Resource Management System project.
