@@ -284,7 +284,7 @@ export default function PatientDetailDialog({
   disabled,
   bed,
 }: Props) {
-  console.log("hbAC ASBHBA" + bed.ward+" AMNWDMN");
+  console.log("hbAC ASBHBA" + bed.ward + " AMNWDMN");
 
   const [open, setOpen] = useState(false);
 
@@ -327,7 +327,6 @@ export default function PatientDetailDialog({
         <DialogContent className="!w-[1100px] !max-w-[1100px] bg-white border border-slate-200 rounded-3xl p-0 overflow-hidden shadow-2xl">
           <DialogTitle className="hidden">Patient Details</DialogTitle>
 
-      
           <div className="flex items-center justify-between px-8 py-6 border-b border-slate-100 bg-white">
             <div className="flex items-center gap-4">
               <div className="w-14 h-14 rounded-2xl bg-blue-600 flex items-center justify-center">
@@ -405,9 +404,7 @@ export default function PatientDetailDialog({
                   Assigned Doctor
                 </p>
 
-                <p className="text-slate-700 font-medium">
-                  {bed.doctor || "Not Assigned"}
-                </p>
+                <p className="text-slate-700 font-medium">{"Ram"}</p>
               </div>
             </div>
 

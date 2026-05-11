@@ -146,11 +146,17 @@ export default function DischargePatientsPage() {
 
     };
 
-  useEffect(() => {
+useEffect(() => {
 
-    fetchDashboard();
+  const loadData =
+    async () => {
 
-  }, [fetchDashboard]);
+      await fetchDashboard();
+    };
+
+  loadData();
+
+}, [fetchDashboard]);
 
   return (
     <div className="min-h-screen bg-[#F7F5FC] p-6">
