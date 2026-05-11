@@ -1,144 +1,330 @@
+import { useEffect, useState } from "react";
+
+import axios from "axios";
+
+import { useSelector } from "react-redux";
+
+import type { RootState } from "@/store/store";
+import { toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
+
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 
 import { Button } from "@/components/ui/button";
 
-import { Textarea } from "@/components/ui/textarea";
+import { Building2, BedDouble } from "lucide-react";
 
-import {Select, SelectContent, SelectItem, SelectTrigger,SelectValue} from "@/components/ui/select";
+const BASE_URL = "http://localhost:3000/api/v1";
 
-import {BedDouble,TriangleAlert,Building2} from "lucide-react";
+type Ward = {
+  id: number;
+
+  name: string;
+
+  type: string;
+
+  capacity: number;
+
+  description: string;
+
+  created_at: string;
+
+  updated_at: string;
+};
 
 interface Props {
-  children: React.ReactNode;
+  open: boolean;
+
+  onOpenChange: (open: boolean) => void;
+
+  patientId: number;
+
+  patientName: string;
+
+  currentWardId: number;
+
+  currentWardName: string;
+
+  currentBedId: number;
+
+  currentBedNumber: string;
 }
 
 export default function TransferPatientDialog({
-  children,
+  open,
+  onOpenChange,
+  patientId,
+  patientName,
+  currentWardName,
+  currentBedNumber,
 }: Props) {
-  return (
-    <Dialog>
-      <DialogTrigger asChild>
-        {children}
-      </DialogTrigger>
+  const token = useSelector((state: RootState) => state.auth.token);
 
-      <DialogContent className="sm:max-w-2xl p-0 bg-white overflow-hidden">
-    
-        <DialogHeader className="border-b px-6 py-5">
+  const [wards, setWards] = useState<Ward[]>([]);
+
+  const [destinationWardId, setDestinationWardId] = useState("");
+
+  const [availableBeds, setAvailableBeds] = useState<any[]>([]);
+
+  const [selectedBedId, setSelectedBedId] = useState("");
+
+  const [loading, setLoading] = useState(false);
+
+  const loadWards = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/wards/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.data.success) {
+        setWards(response.data.data);
+      }
+    } catch (error) {
+      console.log("WARD FETCH ERROR:", error);
+    }
+  };
+
+  const loadAvailableBeds = async (wardId: string) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/beds/available?wardId=${wardId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      console.log("AVAILABLE BEDS:", response.data);
+
+      if (response.data.success) {
+        setAvailableBeds(response.data.data);
+      }
+    } catch (error) {
+      console.log("AVAILABLE BED ERROR:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (open && token) {
+      loadWards();
+    }
+  }, [open, token]);
+
+  const handleTransfer = async () => {
+    if (!destinationWardId) {
+      toast.error("Please select destination ward");
+
+      return;
+    }
+
+    if (!selectedBedId) {
+      toast.error("Please select available bed");
+
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const selectedBed = availableBeds.find(
+        (bed: any) => bed.id === Number(selectedBedId),
+      );
+
+      console.log({
+        patientId,
+
+        fromBedNumber: currentBedNumber,
+
+        toBedNumber: selectedBed?.bed_number,
+      });
+
+      await axios.post(
+        `${BASE_URL}/staff/transfers`,
+        {
+          patientId,
+
+          fromBedNumber: currentBedNumber,
+
+          toBedNumber: selectedBed?.bed_number,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      toast.success("Transfer request submitted successfully");
+
+      onOpenChange(false);
+
+      setDestinationWardId("");
+
+      setSelectedBedId("");
+
+      setAvailableBeds([]);
+    } catch (error: any) {
+      console.log("TRANSFER ERROR:", error.response?.data);
+
+      toast.error(
+  error.response?.data?.message ||
+    "Failed to submit transfer request",
+);
+   
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-2xl bg-white border border-slate-200 rounded-3xl p-0 shadow-2xl">
+        {/* HEADER */}
+        <DialogHeader className="px-8 py-6 border-b border-slate-100 bg-white">
           <div>
-            <p className="text-xs uppercase tracking-[2px] text-[#00288E] font-semibold">
-              Patient Movement
+            <p className="text-xs uppercase tracking-[0.2em] text-blue-600 font-semibold mb-2">
+              Patient Transfer
             </p>
 
-            <DialogTitle className="text-3xl font-bold mt-2">
-              Transfer Jonathan Richards
+            <DialogTitle className="text-3xl font-bold text-slate-900">
+              Transfer {patientName}
             </DialogTitle>
+
+            <p className="text-sm text-slate-500 mt-2">
+              Create patient transfer request.
+            </p>
           </div>
         </DialogHeader>
 
-        <div className="p-6 space-y-6">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="text-xs uppercase text-slate-500 font-semibold">
+    
+        <div className="p-8 space-y-6 bg-white">
+       
+          <div className="grid grid-cols-2 gap-5">
+     
+            <div className="border border-slate-200 rounded-2xl p-5 bg-slate-50">
+              <p className="text-xs uppercase tracking-wide text-slate-400 font-semibold mb-3">
                 Current Ward
-              </label>
+              </p>
 
-              <div className="mt-2 border rounded-lg h-12 px-4 flex items-center gap-3 bg-slate-50">
-                <Building2 className="w-4 h-4 text-[#00288E]" />
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-xl bg-blue-100 flex items-center justify-center">
+                  <Building2 className="w-5 h-5 text-blue-600" />
+                </div>
 
-                <span className="text-sm">
-                  North Wing - Cardiology
-                </span>
+                <div>
+                  <p className="font-semibold text-slate-800">
+                    {currentWardName}
+                  </p>
+                </div>
               </div>
             </div>
 
-            <div>
-              <label className="text-xs uppercase text-slate-500 font-semibold">
+          
+            <div className="border border-slate-200 rounded-2xl p-5 bg-slate-50">
+              <p className="text-xs uppercase tracking-wide text-slate-400 font-semibold mb-3">
                 Current Bed
-              </label>
+              </p>
 
-              <div className="mt-2 border rounded-lg h-12 px-4 flex items-center gap-3 bg-slate-50">
-                <BedDouble className="w-4 h-4 text-[#00288E]" />
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-xl bg-blue-100 flex items-center justify-center">
+                  <BedDouble className="w-5 h-5 text-blue-600" />
+                </div>
 
-                <span className="text-sm">
-                  Bed B-12
-                </span>
+                <div>
+                  <p className="font-semibold text-slate-800">
+                    {currentBedNumber}
+                  </p>
+                </div>
               </div>
             </div>
-                  </div>
-                  
-          <div>
-            <label className="text-xs uppercase text-slate-500 font-semibold">
+          </div>
+
+     
+          <div className="space-y-3">
+            <label className="text-xs uppercase tracking-wide text-slate-500 font-semibold">
               Destination Ward
             </label>
 
-            <Select>
-              <SelectTrigger className="mt-2 h-12 bg-white">
-                <SelectValue placeholder="Select ward" />
-              </SelectTrigger>
+            <div className="relative">
+              <select
+                value={destinationWardId}
+                onChange={(e) => {
+                  const wardId = e.target.value;
 
-              <SelectContent className="bg-white">
-                <SelectItem value="rehab">
-                  Post-Operative Recovery
-                </SelectItem>
+                  setDestinationWardId(wardId);
 
-                <SelectItem value="icu">
-                  ICU
-                </SelectItem>
+                  setSelectedBedId("");
 
-                <SelectItem value="general">
-                  General Ward
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+                  loadAvailableBeds(wardId);
+                }}
+                className="w-full h-14 rounded-2xl border border-slate-200 bg-white px-4 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
+              >
+                <option value="">Select destination ward</option>
 
-          <div>
-            <label className="text-xs uppercase text-slate-500 font-semibold">
-              Destination Bed
-            </label>
+                {wards.map((ward) => (
+                  <option key={ward.id} value={String(ward.id)}>
+                    {ward.name}
+                  </option>
+                ))}
+              </select>
 
-            <div className="mt-2 border border-red-500 rounded-lg h-12 px-4 flex items-center justify-between bg-red-50">
-              <span className="text-sm text-red-600">
-                No available beds
-              </span>
-
-              <TriangleAlert className="w-4 h-4 text-red-600" />
-            </div>
-
-            <div className="flex items-center gap-2 mt-2 text-xs text-red-600">
-              <TriangleAlert className="w-3 h-3" />
-
-              No available beds in selected ward.
-              Request will be queued.
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                ▼
+              </div>
             </div>
           </div>
 
-          <div>
-            <label className="text-xs uppercase text-slate-500 font-semibold">
-              Transfer Reason
+     
+          <div className="space-y-3">
+            <label className="text-xs uppercase tracking-wide text-slate-500 font-semibold">
+              Available Beds
             </label>
 
-            <Textarea
-              className="mt-2 min-h-[120px]"
-              placeholder="Specify clinical necessity for transfer..."
-            />
+            <div className="relative">
+              <select
+                value={selectedBedId}
+                onChange={(e) => setSelectedBedId(e.target.value)}
+                className="w-full h-14 rounded-2xl border border-slate-200 bg-white px-4 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
+              >
+                <option value="">Select available bed</option>
+
+                {availableBeds.map((bed: any) => (
+                  <option key={bed.id} value={bed.id}>
+                    {bed.bed_number}
+                  </option>
+                ))}
+              </select>
+
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                ▼
+              </div>
+            </div>
           </div>
         </div>
 
-  
-        <div className="border-t bg-slate-50 px-6 py-4 flex items-center justify-between">
-          <Button variant="ghost">
+        <div className="px-8 py-5 border-t border-slate-100 bg-white flex items-center justify-between">
+          <Button
+            variant="ghost"
+            onClick={() => onOpenChange(false)}
+            className="rounded-xl"
+          >
             Cancel
           </Button>
 
-          <Button className= "text-white bg-[#00288E] hover:bg-[#001d66]">
-            Submit Transfer Request
+          <Button
+            onClick={handleTransfer}
+            disabled={loading || !destinationWardId || !selectedBedId}
+            className="bg-blue-600 hover:bg-blue-700 rounded-xl px-6"
+          >
+            {loading ? "Submitting..." : "Submit Transfer Request"}
           </Button>
         </div>
       </DialogContent>

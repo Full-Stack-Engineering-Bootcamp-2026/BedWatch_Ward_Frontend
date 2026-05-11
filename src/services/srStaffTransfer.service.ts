@@ -60,7 +60,7 @@ export const rejectTransfer = async (id: number) => {
 
 export const getTransfers = async () => {
   const response = await axios.get(
-    `${BASE_URL}/senior-staff/transfers`,
+    `${BASE_URL}/transfers/all`,
     getAuthHeader(),
   );
   return response.data.data;

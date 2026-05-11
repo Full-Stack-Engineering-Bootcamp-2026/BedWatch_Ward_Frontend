@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-
+import { useSelector } from "react-redux";
 import {
   Dialog,
   DialogContent,
@@ -48,7 +48,7 @@ type Props = {
 
 function AddStaffModal({ children }: Props) {
   const [open, setOpen] = useState(false);
-
+  const token = useSelector((state: any) => state.auth.token);
   const [wards, setWards] = useState<Ward[]>([]);
 
   const {
@@ -73,8 +73,11 @@ function AddStaffModal({ children }: Props) {
 
   const fetchWards = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/api/v1/wards/");
-
+      const response = await axios.get("http://localhost:3000/api/v1/wards/", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setWards(response.data.data);
     } catch (error) {
       console.error(error);
@@ -104,21 +107,27 @@ function AddStaffModal({ children }: Props) {
           email: data.email,
           role: data.role,
         },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
 
       toast.success(
         `${data.role} account created and setup email sent successfully`,
       );
 
-      // toast.success("Staff account created successfully");
-
       reset();
-
       setOpen(false);
-    } catch (error) {
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+    } catch (error: any) {
       console.error(error);
 
-      toast.error("Failed to create staff");
+      toast.error(error?.response?.data?.message || "Something went wrong");
     }
   };
 

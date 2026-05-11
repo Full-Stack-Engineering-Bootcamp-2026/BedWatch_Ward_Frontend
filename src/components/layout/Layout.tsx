@@ -56,13 +56,14 @@ function StaffLayout() {
         <div className="flex flex-1 overflow-hidden">
           <AppSidebar open={open} setOpen={setOpen} />
 
-          <div className="flex flex-col flex-1 overflow-y-auto">
-            <main className=" bg-gray-50 ml-8 ">
-              <Outlet />
-            </main>
+          <div className="flex flex-col flex-1 overflow-hidden">
+  
+  <main className="flex-1 overflow-y-auto overflow-x-hidden bg-gray-50 px-6">
+    <Outlet />
+  </main>
 
-            <Footer />
-          </div>
+  <Footer />
+</div>
         </div>
       </div>
     </SidebarProvider>

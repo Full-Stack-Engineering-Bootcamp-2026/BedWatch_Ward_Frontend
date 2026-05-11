@@ -6,8 +6,7 @@ import { NavLink } from "react-router-dom";
 import { MdOutlineDashboard, MdOutlineBed } from "react-icons/md";
 import { LiaUserShieldSolid } from "react-icons/lia";
 
-import AddStaffModal from "../components/AddStaffModal";
-import { FaChartPie } from "react-icons/fa";
+import { FaBuildingShield } from "react-icons/fa6";
 
 type SidebarProps = {
   open: boolean;
@@ -18,22 +17,17 @@ const menu = [
   {
     name: "Dashboard",
     icon: MdOutlineDashboard,
-    path: "/admin-dashboard",
+    path: "/sr-staff/dashboard",
   },
   {
-    name: "Ward View",
+    name: "Transfer Details",
     icon: MdOutlineBed,
-    path: "/Wardview",
+    path: "/sr-staff/transfers",
   },
   {
-    name: "Occupancy Chart",
-    icon: FaChartPie,
-    path: "/admin-occupancyChart",
-  },
-  {
-    name: "System Admin",
+    name: "All Wards",
     icon: LiaUserShieldSolid,
-    path: "/Systemadmin",
+    path: "/Sr-staff/AllWards",
   },
 ];
 
@@ -87,11 +81,14 @@ export default function AppSidebar({ open, setOpen }: SidebarProps) {
             })}
 
             <div className="pt-6 text-white">
-              <AddStaffModal>
-                <Button className="w-full h-11 bg-black hover:bg-[#18379c]">
-                  + New Admission
-                </Button>
-              </AddStaffModal>
+              <Button
+                asChild
+                className="w-full h-11 bg-black hover:bg-[#18379c]"
+              >
+                <NavLink to="/sr-staff/ViewPending">
+                  View Pending Requests
+                </NavLink>
+              </Button>
             </div>
           </div>
         </div>

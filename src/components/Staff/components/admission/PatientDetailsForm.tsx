@@ -2,26 +2,66 @@ import { Input } from "@/components/ui/input";
 
 import { Textarea } from "@/components/ui/textarea";
 
-import {Select,SelectContent,SelectItem,SelectTrigger,SelectValue,} from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
-export default function PatientDetailsForm() {
+type Props = {
+  formData: {
+    name: string;
+    age: string;
+    gender: string;
+    reason: string;
+    notes: string;
+    admittingDoctor: string;
+    bed_id: string;
+  };
+
+  handleChange: (
+    field: string,
+    value: string
+  ) => void;
+};
+
+export default function PatientDetailsForm({
+  formData,
+  handleChange,
+}: Props) {
+
   return (
     <div className="bg-white border rounded-lg p-5">
+
       <h2 className="font-semibold text-lg mb-5">
         Patient Details
       </h2>
 
       <div className="space-y-5">
+
     
         <div>
           <label className="text-sm">
             Full Name
           </label>
 
-          <Input placeholder="Enter patient's legal name" />
+          <Input
+            placeholder="Enter patient's legal name"
+            value={formData.name}
+            onChange={(e) =>
+              handleChange(
+                "name",
+                e.target.value
+              )
+            }
+          />
         </div>
 
+   
         <div className="grid grid-cols-2 gap-4">
+
           <div>
             <label className="text-sm">
               Age
@@ -30,6 +70,13 @@ export default function PatientDetailsForm() {
             <Input
               type="number"
               placeholder="Years"
+              value={formData.age}
+              onChange={(e) =>
+                handleChange(
+                  "age",
+                  e.target.value
+                )
+              }
             />
           </div>
 
@@ -38,23 +85,33 @@ export default function PatientDetailsForm() {
               Gender
             </label>
 
-            <Select>
+            <Select
+              value={formData.gender}
+              onValueChange={(value) =>
+                handleChange(
+                  "gender",
+                  value
+                )
+              }
+            >
               <SelectTrigger className="w-full mt-1">
                 <SelectValue placeholder="Select gender" />
               </SelectTrigger>
 
               <SelectContent className="bg-white">
-                <SelectItem value="male">
+
+                <SelectItem value="MALE">
                   Male
                 </SelectItem>
 
-                <SelectItem value="female">
+                <SelectItem value="FEMALE">
                   Female
                 </SelectItem>
 
-                <SelectItem value="other">
+                <SelectItem value="OTHER">
                   Other
                 </SelectItem>
+
               </SelectContent>
             </Select>
           </div>
@@ -66,35 +123,51 @@ export default function PatientDetailsForm() {
             Admission Reason
           </label>
 
-          <Textarea placeholder="Primary complaint or diagnosis summary" />
+          <Textarea
+            placeholder="Primary complaint or diagnosis summary"
+            value={formData.reason}
+            onChange={(e) =>
+              handleChange(
+                "reason",
+                e.target.value
+              )
+            }
+          />
         </div>
 
     
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="text-sm">
-              Admitting Doctor
-            </label>
+        <div>
+          <label className="text-sm">
+            Admitting Doctor
+          </label>
 
-            <Input placeholder="Dr. Name or ID" />
-          </div>
-
-          <div>
-            <label className="text-sm">
-              Department Code
-            </label>
-
-            <Input placeholder="MED-SURG-01" />
-          </div>
+          <Input
+            placeholder="Dr. Name"
+            value={formData.admittingDoctor}
+            onChange={(e) =>
+              handleChange(
+                "admittingDoctor",
+                e.target.value
+              )
+            }
+          />
         </div>
-
-   
+  
         <div>
           <label className="text-sm">
             Notes
           </label>
 
-          <Textarea placeholder="Additional observations..." />
+          <Textarea
+            placeholder="Additional observations..."
+            value={formData.notes}
+            onChange={(e) =>
+              handleChange(
+                "notes",
+                e.target.value
+              )
+            }
+          />
         </div>
       </div>
     </div>

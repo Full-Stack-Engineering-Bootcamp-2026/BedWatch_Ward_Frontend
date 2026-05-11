@@ -7,7 +7,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import axios from "axios";
-
+import { useSelector } from "react-redux";
 import {
   FaSearch,
   FaFilter,
@@ -45,6 +45,7 @@ type StaffType = {
 };
 
 function StaffManagement() {
+  const token = useSelector((state: any) => state.auth.token);
   const [staffData, setStaffData] = useState<StaffType[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -57,6 +58,11 @@ function StaffManagement() {
 
       const response = await axios.get(
         "http://localhost:3000/api/v1/usersAdmin/allstaff",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
 
       setStaffData(response.data.data);

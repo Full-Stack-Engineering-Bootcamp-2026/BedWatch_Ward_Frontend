@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import { FaHospital, FaRegUserCircle, FaUserPlus, FaBed } from "react-icons/fa";
-
+import { useSelector } from "react-redux";
 import { FaArrowRightArrowLeft } from "react-icons/fa6";
 import { MdPieChartOutline } from "react-icons/md";
 
@@ -14,6 +14,7 @@ import ActionCard from "../components/ActionCard";
 import ReportCard from "../components/ReportCard";
 import AddWardModal from "../components/AddWardModal";
 import AddStaffModal from "../components/AddStaffModal";
+import { useNavigate } from "react-router-dom";
 
 type WardSummary = {
   id: number;
@@ -27,6 +28,8 @@ type WardSummary = {
 };
 
 function Dashboard() {
+  const navigate = useNavigate();
+  const token = useSelector((state: any) => state.auth.token);
   const [dashboardStats, setDashboardStats] = useState({
     totalWards: 0,
     totalBeds: 0,
@@ -38,6 +41,11 @@ function Dashboard() {
     try {
       const response = await axios.get(
         "http://localhost:3000/api/v1/wards/summary",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
 
       const wards = response.data.data;
@@ -142,7 +150,10 @@ function Dashboard() {
               </AddStaffModal>
             </div>
 
-            <div className="h-full">
+            <div
+              className="h-full"
+              onClick={() => navigate("/admin-occupancyChart")}
+            >
               <ReportCard />
             </div>
           </div>

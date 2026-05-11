@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import { cn } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
@@ -19,7 +21,8 @@ import {
   MdOutlineWheelchairPickup,
 } from "react-icons/md";
 
-import TransferPatientDialog from "../Staff/components/TransferPatientDialog";
+import TransferPatientDialog from "../components/TransferPatientDialog";
+
 type SidebarProps = {
   open: boolean;
 
@@ -30,7 +33,7 @@ const menu = [
   {
     name: "Dashboard",
     icon: MdOutlineDashboard,
-    path: "/staff/dashboard",
+    path: "/staff-dashboard",
   },
 
   {
@@ -39,15 +42,18 @@ const menu = [
     path: "/staff/discharge",
   },
 
-  {
-    name: "Patient Transfer",
-    icon: MdOutlineWheelchairPickup,
-    path: "#",
-  },
+  // {
+  //   name: "Patient Transfer",
+  //   icon: MdOutlineWheelchairPickup,
+  //   path: "#",
+  // },
 ];
 
 export default function AppSidebar({ open, setOpen }: SidebarProps) {
   const navigate = useNavigate();
+
+  // ADD THIS
+  const [transferOpen, setTransferOpen] = useState(false);
 
   return (
     <>
@@ -92,8 +98,9 @@ export default function AppSidebar({ open, setOpen }: SidebarProps) {
                   <SidebarMenuItem className="list-none">
                     <SidebarMenuButton asChild>
                       {item.name === "Patient Transfer" ? (
-                        <TransferPatientDialog>
+                        <>
                           <button
+                            onClick={() => setTransferOpen(true)}
                             className={cn(
                               "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 w-full text-gray-600 hover:bg-gray-100 hover:text-black",
                             )}
@@ -102,7 +109,19 @@ export default function AppSidebar({ open, setOpen }: SidebarProps) {
 
                             <span>{item.name}</span>
                           </button>
-                        </TransferPatientDialog>
+
+                    
+                          <TransferPatientDialog
+                            open={transferOpen}
+                            onOpenChange={setTransferOpen}
+                            patientId={0}
+                            patientName=""
+                            currentWardId={0}
+                            currentWardName=""
+                            currentBedId={0}
+                            currentBedNumber=""
+                          />
+                        </>
                       ) : (
                         <NavLink to={item.path} onClick={() => setOpen(false)}>
                           {({ isActive }) => (
