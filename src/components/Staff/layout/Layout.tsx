@@ -47,7 +47,6 @@ function StaffLayout() {
 
   return (
     <SidebarProvider className="bg-[#f4f1f8]">
-      
       <div className="flex flex-col h-screen w-full ">
         <div className="sticky top-0 z-50">
           <Navbar setOpen={setOpen} />{" "}

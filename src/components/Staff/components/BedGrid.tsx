@@ -29,8 +29,7 @@ export default function BedGrid({ beds }: BedGridProps) {
 
   return (
     <div className="space-y-4">
-      <FilterBar filter={filter} setFilter={setFilter}  
-   />
+      <FilterBar filter={filter} setFilter={setFilter} />
 
       <div className="grid grid-cols-4 gap-3">
         {filteredBeds.map((bed) => (

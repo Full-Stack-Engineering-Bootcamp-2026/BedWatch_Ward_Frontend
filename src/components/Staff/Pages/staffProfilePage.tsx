@@ -1,34 +1,14 @@
-import React, {
-  useEffect,
-  useState,
-  type ChangeEvent,
-} from "react";
-
+import React, { useEffect, useState, type ChangeEvent } from "react";
 import { Button } from "@/components/ui/button";
-
 import { Input } from "@/components/ui/input";
-
 import { Label } from "@/components/ui/label";
-
 import { toast } from "react-toastify";
-
 import { getLoggedInUserProfile } from "@/services/srStaff.profile.service";
-
 import { logout } from "@/store/slices/authSlice";
-
-import {
-  LogOut,
-  KeyRound,
-} from "lucide-react";
-
+import { LogOut, KeyRound } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
-import {
-  useDispatch,
-  useSelector,
-} from "react-redux";
-
-import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios"; 
 
 import {
   Dialog,
@@ -51,7 +31,6 @@ type Ward = {
 };
 
 type ProfileUser = {
-
   id: number;
 
   name: string;
@@ -74,39 +53,24 @@ export default function StaffProfile() {
 
   const navigate = useNavigate();
 
-  const {
-    user: authUser,
-    token,
-  } = useSelector(
-    (state: any) => state.auth,
-  );
+  const { user: authUser, token } = useSelector((state: any) => state.auth);
 
-  const [profileUser, setProfileUser] =
-    useState<ProfileUser | null>(
-      null,
-    );
+  const [profileUser, setProfileUser] = useState<ProfileUser | null>(null);
 
-  const [loading, setLoading] =
-    useState(true);
+  const [loading, setLoading] = useState(true);
 
-  const [uploading, setUploading] =
-    useState(false);
+  const [uploading, setUploading] = useState(false);
 
-  const [open, setOpen] =
-    useState(false);
+  const [open, setOpen] = useState(false);
 
-  const [formData, setFormData] =
-    useState({
-      oldPassword: "",
+  const [formData, setFormData] = useState({
+    oldPassword: "",
 
-      newPassword: "",
-    });
+    newPassword: "",
+  });
 
-  const handleChange = (
-    event: ChangeEvent<HTMLInputElement>,
-  ) => {
-    const { name, value } =
-      event.target;
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
 
     setFormData((prev) => ({
       ...prev,
@@ -115,176 +79,119 @@ export default function StaffProfile() {
     }));
   };
 
-const uploadProfileImage = async (
-  file: File,
-) => {
-  try {
+  const uploadProfileImage = async (file: File) => {
+    try {
+      setUploading(true);
 
-    setUploading(true);
+      const formData = new FormData();
 
-    const formData =
-      new FormData();
+      formData.append("image", file);
 
-    formData.append(
-      "image",
-      file,
-    );
-
-    const response =
-      await axios.post(
+      const response = await axios.post(
         "http://localhost:3000/api/v1/users/upload-profile",
 
         formData,
 
         {
           headers: {
-            Authorization:
-              `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
 
-            "Content-Type":
-              "multipart/form-data",
+            "Content-Type": "multipart/form-data",
           },
         },
       );
 
-    const imageUrl =
-      response.data.data.imageUrl;
+      const imageUrl = response.data.data.imageUrl;
 
-    setProfileUser((prev: any) => ({
-      ...prev,
+      setProfileUser((prev: any) => ({
+        ...prev,
 
-      profileImage:
-        imageUrl,
-    }));
+        profileImage: imageUrl,
+      }));
 
-    toast.success(
-      "Profile image uploaded successfully",
-    );
+      toast.success("Profile image uploaded successfully");
+    } catch (error: any) {
+      console.error("Upload failed", error);
 
-  } catch (error: any) {
+      toast.error(error?.response?.data?.message || "Failed to upload image");
+    } finally {
+      setUploading(false);
+    }
+  };
 
-    console.error(
-      "Upload failed",
-      error,
-    );
+  const handleChangePassword = async () => {
+    try {
+      if (!authUser?.id) {
+        toast.error("User not found");
 
-    toast.error(
-      error?.response?.data?.message ||
-      "Failed to upload image",
-    );
-
-  } finally {
-
-    setUploading(false);
-  }
-};
-    
-  const handleChangePassword =
-    async () => {
-      try {
-        if (!authUser?.id) {
-          toast.error(
-            "User not found",
-          );
-
-          return;
-        }
-
-        if (
-          !formData.oldPassword ||
-          !formData.newPassword
-        ) {
-          toast.error(
-            "Please enter old and new password",
-          );
-
-          return;
-        }
-
-        if (!token) {
-          toast.error(
-            "Token not found. Please login again.",
-          );
-
-          return;
-        }
-
-        const response =
-          await axios.put(
-            "http://localhost:3000/api/v1/usersAdmin/change-password",
-            {
-              id: Number(
-                authUser.id,
-              ),
-
-              oldPassword:
-                formData.oldPassword,
-
-              newPassword:
-                formData.newPassword,
-            },
-
-            {
-              headers: {
-                "Content-Type":
-                  "application/json",
-
-                Authorization: `Bearer ${token}`,
-              },
-            },
-          );
-
-        toast.success(
-          response.data.message ||
-            "Password changed successfully",
-        );
-
-        setFormData({
-          oldPassword: "",
-
-          newPassword: "",
-        });
-
-        setOpen(false);
-      } catch (error: any) {
-        toast.error(
-          error?.response?.data
-            ?.message ||
-            "Something went wrong",
-        );
+        return;
       }
-    };
 
-  const fetchProfile =
-    async () => {
-      try {
-        const data =
-          await getLoggedInUserProfile();
+      if (!formData.oldPassword || !formData.newPassword) {
+        toast.error("Please enter old and new password");
 
-        setProfileUser(data);
-      } catch (error) {
-        console.error(
-          "Failed to fetch profile",
-          error,
-        );
-
-        toast.error(
-          "Failed to fetch profile",
-        );
-      } finally {
-        setLoading(false);
+        return;
       }
-    };
+
+      if (!token) {
+        toast.error("Token not found. Please login again.");
+
+        return;
+      }
+
+      const response = await axios.put(
+        "http://localhost:3000/api/v1/usersAdmin/change-password",
+        {
+          id: Number(authUser.id),
+
+          oldPassword: formData.oldPassword,
+
+          newPassword: formData.newPassword,
+        },
+
+        {
+          headers: {
+            "Content-Type": "application/json",
+
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      toast.success(response.data.message || "Password changed successfully");
+
+      setFormData({
+        oldPassword: "",
+
+        newPassword: "",
+      });
+
+      setOpen(false);
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || "Something went wrong");
+    }
+  };
+
+  const fetchProfile = async () => {
+    try {
+      const data = await getLoggedInUserProfile();
+
+      setProfileUser(data);
+    } catch (error) {
+      console.error("Failed to fetch profile", error);
+
+      toast.error("Failed to fetch profile");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchProfile();
   }, []);
 
-  const formatRole = (
-    role?: string,
-  ) => {
-    if (!role)
-      return "Ward Staff";
+  const formatRole = (role?: string) => {
+    if (!role) return "Ward Staff";
 
     if (role === "STAFF") {
       return "Ward Staff";
@@ -293,17 +200,11 @@ const uploadProfileImage = async (
     return role
       .toLowerCase()
       .split("_")
-      .map(
-        (word) =>
-          word.charAt(0).toUpperCase() +
-          word.slice(1),
-      )
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
   };
 
-  const formatAccessLevel = (
-    role?: string,
-  ) => {
+  const formatAccessLevel = (role?: string) => {
     if (role === "STAFF") {
       return "L1-Staff";
     }
@@ -320,9 +221,7 @@ const uploadProfileImage = async (
   if (loading) {
     return (
       <div className="w-full bg-[#FBF8FF] p-8 min-h-screen">
-        <div className="p-10 text-lg font-semibold">
-          Loading Profile...
-        </div>
+        <div className="p-10 text-lg font-semibold">Loading Profile...</div>
       </div>
     );
   }
@@ -346,13 +245,11 @@ const uploadProfileImage = async (
             </div>
 
             <h2 className="font-bold text-2xl text-gray-900">
-              {profileUser?.name ??
-                "Staff"}
+              {profileUser?.name ?? "Staff"}
             </h2>
 
             <span className="inline-block mt-2 text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded">
-              {profileUser?.role ??
-                "STAFF"}
+              {profileUser?.role ?? "STAFF"}
             </span>
 
             <div className="mt-6">
@@ -362,14 +259,10 @@ const uploadProfileImage = async (
                 id="profile-upload"
                 className="hidden"
                 onChange={(event) => {
-                  const file =
-                    event.target
-                      .files?.[0];
+                  const file = event.target.files?.[0];
 
                   if (file) {
-                    uploadProfileImage(
-                      file,
-                    );
+                    uploadProfileImage(file);
                   }
                 }}
               />
@@ -380,19 +273,12 @@ const uploadProfileImage = async (
                   disabled={uploading}
                   className="w-full bg-[#1E40AF] hover:bg-blue-800 text-white cursor-pointer"
                 >
-                  <span>
-                    {uploading
-                      ? "Uploading..."
-                      : "Upload Image"}
-                  </span>
+                  <span>{uploading ? "Uploading..." : "Upload Image"}</span>
                 </Button>
               </label>
             </div>
 
-            <Dialog
-              open={open}
-              onOpenChange={setOpen}
-            >
+            <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger asChild>
                 <Button className="w-full mt-3 text-white bg-[#1E40AF] hover:bg-[#18379c]">
                   <KeyRound className="mr-2 h-4 w-4" />
@@ -402,52 +288,37 @@ const uploadProfileImage = async (
 
               <DialogContent className="sm:max-w-[425px] rounded-2xl bg-[#F8FAFF] border border-[#E2E8F0]">
                 <DialogHeader>
-                  <DialogTitle>
-                    Change Password
-                  </DialogTitle>
+                  <DialogTitle>Change Password</DialogTitle>
 
                   <DialogDescription>
-                    Enter your old and new
-                    password below.
+                    Enter your old and new password below.
                   </DialogDescription>
                 </DialogHeader>
 
                 <div className="grid gap-5 py-4">
                   <div className="grid gap-2">
-                    <Label htmlFor="oldPassword">
-                      Old Password
-                    </Label>
+                    <Label htmlFor="oldPassword">Old Password</Label>
 
                     <Input
                       id="oldPassword"
                       type="password"
                       name="oldPassword"
                       placeholder="Enter old password"
-                      value={
-                        formData.oldPassword
-                      }
-                      onChange={
-                        handleChange
-                      }
+                      value={formData.oldPassword}
+                      onChange={handleChange}
                     />
                   </div>
 
                   <div className="grid gap-2">
-                    <Label htmlFor="newPassword">
-                      New Password
-                    </Label>
+                    <Label htmlFor="newPassword">New Password</Label>
 
                     <Input
                       id="newPassword"
                       type="password"
                       name="newPassword"
                       placeholder="Enter new password"
-                      value={
-                        formData.newPassword
-                      }
-                      onChange={
-                        handleChange
-                      }
+                      value={formData.newPassword}
+                      onChange={handleChange}
                     />
                   </div>
                 </div>
@@ -455,9 +326,7 @@ const uploadProfileImage = async (
                 <DialogFooter>
                   <Button
                     className="text-white bg-[#1E40AF] hover:bg-[#18379c]"
-                    onClick={
-                      handleChangePassword
-                    }
+                    onClick={handleChangePassword}
                   >
                     Update Password
                   </Button>
@@ -481,9 +350,7 @@ const uploadProfileImage = async (
                 Shift Status
               </p>
 
-              <p className="text-lg font-bold text-green-600">
-                Active
-              </p>
+              <p className="text-lg font-bold text-green-600">Active</p>
             </div>
 
             <div className="bg-white border border-gray-200 rounded-md p-4">
@@ -492,9 +359,7 @@ const uploadProfileImage = async (
               </p>
 
               <p className="text-lg font-bold text-blue-600">
-                {formatAccessLevel(
-                  profileUser?.role,
-                )}
+                {formatAccessLevel(profileUser?.role)}
               </p>
             </div>
           </div>
@@ -508,8 +373,7 @@ const uploadProfileImage = async (
               </h3>
 
               <p className="text-sm text-gray-500 mt-1">
-                Read-only operational
-                identity records.
+                Read-only operational identity records.
               </p>
             </div>
 
@@ -520,8 +384,7 @@ const uploadProfileImage = async (
                 </p>
 
                 <p className="font-bold text-gray-800 mt-2">
-                  {profileUser?.name ??
-                    "Not available"}
+                  {profileUser?.name ?? "Not available"}
                 </p>
               </div>
 
@@ -531,8 +394,7 @@ const uploadProfileImage = async (
                 </p>
 
                 <p className="font-bold text-gray-800 mt-2">
-                  {profileUser?.email ??
-                    "Not available"}
+                  {profileUser?.email ?? "Not available"}
                 </p>
               </div>
 
@@ -542,9 +404,7 @@ const uploadProfileImage = async (
                 </p>
 
                 <p className="font-bold text-gray-800 mt-2">
-                  {formatRole(
-                    profileUser?.role,
-                  )}
+                  {formatRole(profileUser?.role)}
                 </p>
               </div>
 
@@ -565,9 +425,7 @@ const uploadProfileImage = async (
                   Contact Phone
                 </p>
 
-                <p className="font-bold text-gray-800 mt-2">
-                  +91-8080-***-213
-                </p>
+                <p className="font-bold text-gray-800 mt-2">+91-8080-***-213</p>
               </div>
 
               <div>
@@ -577,19 +435,14 @@ const uploadProfileImage = async (
 
                 <p className="font-bold text-gray-800 mt-2">
                   {profileUser?.created_at
-                    ? new Date(
-                        profileUser.created_at,
-                      ).toLocaleDateString(
+                    ? new Date(profileUser.created_at).toLocaleDateString(
                         "en-US",
                         {
-                          year:
-                            "numeric",
+                          year: "numeric",
 
-                          month:
-                            "long",
+                          month: "long",
 
-                          day:
-                            "numeric",
+                          day: "numeric",
                         },
                       )
                     : "Not available"}
