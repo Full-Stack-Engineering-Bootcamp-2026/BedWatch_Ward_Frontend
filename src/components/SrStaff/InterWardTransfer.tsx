@@ -1,10 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
-
-import { Button } from "@/components/ui/button";
-
-import { FaFileExport } from "react-icons/fa";
 import TransferReviewModal from "@/components/SrStaff/TransferModal";
-
+import ExportHtmlButton from "@/components/SrStaff/component/exportHtmlButton";
+import { buildTransfersExportHtml } from "@/components/SrStaff/component/exportTransfer";
 import {
   getTransfers,
   getPendingTransfers,
@@ -246,13 +243,11 @@ export default function TransfersList() {
         </div>
 
         <div className="flex gap-4">
-          <Button
-            variant="outline"
-            className="flex items-center gap-2 border-gray-300 text-gray-700"
-          >
-            <FaFileExport />
-            Export CSV
-          </Button>
+          <ExportHtmlButton
+            label="Export TXT"
+            fileName="inter-ward-transfers.txt"
+            getHtml={() => buildTransfersExportHtml(filteredTransfers)}
+          />
         </div>
       </div>
 
