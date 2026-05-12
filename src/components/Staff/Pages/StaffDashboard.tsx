@@ -67,7 +67,7 @@ export default function StaffDashboard() {
 
   return (
     <div className="space-y-6 p-6 bg-[#f4f1f8] min-h-screen">
-      {/* HEADER */}
+  
       <div className="flex items-start justify-between">
         <div>
           <p className="text-xs tracking-widest text-cyan-700 font-semibold uppercase">
@@ -94,10 +94,10 @@ export default function StaffDashboard() {
         </div>
       </div>
 
-      {/* SUMMARY */}
+   
       <SummaryCards beds={beds} />
 
-      {/* BED GRID */}
+  
       <BedGrid beds={beds} />
     </div>
   );

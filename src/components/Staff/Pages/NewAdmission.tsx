@@ -7,7 +7,6 @@ import PatientDetailsForm from "../components/admission/PatientDetailsForm";
 import BedAssignmentCard from "../components/admission/BedAssignmentCard";
 import AdmissionSummaryCard from "../components/admission/AdmissionSummaryCard";
 
-
 export default function NewAdmissionPage() {
   const navigate = useNavigate();
 

@@ -1,13 +1,8 @@
 import { useEffect, useState, useCallback } from "react";
-
 import axios from "axios";
-
 import { useSelector } from "react-redux";
-
 import type { RootState } from "@/store/store";
-
 import PatientSearchBar from "../components/PatientSearchBar";
-
 import DischargePatientsTable from "../components/DischargePatientTable";
 
 export type Bed = {

@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
-
 import { PiNotepadLight } from "react-icons/pi";
-
 import PatientDetailDialog from "./PatientDetailDialog";
 
 interface Props {

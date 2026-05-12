@@ -34,9 +34,9 @@ export default function FilterBar({
 }: Props) {
   return (
     <div className="flex items-center h-[70px] justify-between bg-[#F4F2FC] border border-slate-200 rounded-md px-5 py-4">
-      {/* Left */}
+  
       <div className="flex items-center gap-6">
-        {/* Buttons */}
+ 
         <div className="flex items-center gap-2">
           <button
             onClick={() => setFilter("ALL")}
@@ -84,10 +84,9 @@ export default function FilterBar({
           </button>
         </div>
 
-        {/* Divider */}
         <div className="w-px h-5 bg-slate-200" />
 
-        {/* Dropdown */}
+      
         <div className="flex items-center gap-3">
           <p className="text-sm text-slate-500 whitespace-nowrap">
             Filter By Zone

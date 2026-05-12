@@ -1,7 +1,5 @@
 import { IoMdExit } from "react-icons/io";
-
 import { FaRegHourglass } from "react-icons/fa";
-
 import { GiBroom } from "react-icons/gi";
 
 export default function DischargeStats() {
