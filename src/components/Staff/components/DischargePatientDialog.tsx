@@ -110,7 +110,7 @@ export default function DischargeDialog({
             </div>
           </div>
 
-          {/* Footer */}
+       
           <div className="border-t bg-white px-6 py-4 flex items-center justify-end gap-3">
             <Button
               variant="ghost"
