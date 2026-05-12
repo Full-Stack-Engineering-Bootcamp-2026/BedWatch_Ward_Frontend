@@ -42,29 +42,28 @@ export default function Navbar({ setOpen }: NavbarProps) {
         <span className="font-inter cursor-pointer hover:text-black">
           Resource Map
         </span>
-       <NavLink to="/reports" className={({ isActive }) => `font-inter cursor-pointer hover:text-black ${
-      isActive
-        ? "text-[#00288E] font-semibold"
-        : ""
-    }`
-  }
->
-  Reports
-</NavLink>
+        <NavLink
+          to="/reports"
+          className={({ isActive }) =>
+            `font-inter cursor-pointer hover:text-black ${
+              isActive ? "text-[#00288E] font-semibold" : ""
+            }`
+          }
+        >
+          Reports
+        </NavLink>
       </nav>
 
       <div className="flex items-center gap-4">
         <HelpCircle className="w-5 h-5 text-gray-500 cursor-pointer" />
 
-      <NavLink to="/staff/profile">
-  <Avatar className="w-8 h-8 cursor-pointer border hover:scale-105 transition-all">
-    <AvatarImage src="https://i.pravatar.cc/" />
+        <NavLink to="/staff/profile">
+          <Avatar className="w-8 h-8 cursor-pointer border hover:scale-105 transition-all">
+            <AvatarImage src="https://i.pravatar.cc/" />
 
-    <AvatarFallback>
-      Staff
-    </AvatarFallback>
-  </Avatar>
-</NavLink>
+            <AvatarFallback>Staff</AvatarFallback>
+          </Avatar>
+        </NavLink>
       </div>
     </header>
   );

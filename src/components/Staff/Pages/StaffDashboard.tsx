@@ -1,17 +1,10 @@
 import { useEffect, useState, useCallback } from "react";
-
 import { useSelector } from "react-redux";
-
 import { RootState } from "@/store/store";
-
 import SummaryCards from "../components/SummaryCards";
-
 import BedGrid from "../components/BedGrid";
-
 import { GoDownload } from "react-icons/go";
-
 import axios from "axios";
-
 import { useNavigate } from "react-router-dom";
 
 export default function StaffDashboard() {
@@ -32,13 +25,7 @@ export default function StaffDashboard() {
         },
       },
     );
-    console.log(
-  JSON.stringify(
-    response.data,
-    null,
-    2,
-  ),
-);
+    console.log(JSON.stringify(response.data, null, 2));
     return response.data;
   }, [token]);
 
@@ -80,7 +67,7 @@ export default function StaffDashboard() {
 
   return (
     <div className="space-y-6 p-6 bg-[#f4f1f8] min-h-screen">
-      {/* HEADER */}
+  
       <div className="flex items-start justify-between">
         <div>
           <p className="text-xs tracking-widest text-cyan-700 font-semibold uppercase">
@@ -107,10 +94,10 @@ export default function StaffDashboard() {
         </div>
       </div>
 
-      {/* SUMMARY */}
+   
       <SummaryCards beds={beds} />
 
-      {/* BED GRID */}
+  
       <BedGrid beds={beds} />
     </div>
   );
