@@ -17,15 +17,12 @@ import SrStaffProfile from "./components/SrStaff/SrStaff.profile";
 import SrStaffAllWards from "./components/SrStaff/AllWards";
 import ViewTransferReq from "./components/SrStaff/ViewPending";
 import OperationalReports from "./components/Admin/pages/OperationalReports";
-import AdminProtectedRoute from "./components/protected/AdminProtectedRoute";
-import SrStaffProtectedRoute from "./components/protected/SrStaffProtectedRoute";
 import StaffLayout from "./components/Staff/layout/Layout";
 import StaffDashboard from "./components/Staff/Pages/StaffDashboard";
 import NewAdmissionPage from "./components/Staff/Pages/NewAdmission";
 import DischargePatientsPage from "./components/Staff/Pages/DischargePatient";
-
-import StaffProtectedRoute from "./components/protected/StaffProtectedRoute";
 import StaffProfile from "./components/Staff/Pages/staffProfilePage";
+import CommonProtectedRoute from "./components/protected/CommonProtected";
 
 function App() {
   return (
@@ -33,7 +30,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />
 
-        <Route element={<AdminProtectedRoute />}>
+        <Route element={<CommonProtectedRoute Role={"ADMIN"} />}>
           <Route element={<AdminLayout />}>
             <Route path="/admin-dashboard" element={<Dashboard />} />
             <Route path="/Wardview" element={<WardManagement />} />
@@ -46,7 +43,7 @@ function App() {
           </Route>
         </Route>
 
-        <Route element={<SrStaffProtectedRoute />}>
+        <Route element={<CommonProtectedRoute Role={"SENIOR_STAFF"} />}>
           <Route element={<SrStaffRoute />}>
             <Route path="/sr-staff/dashboard" element={<SrStaffDashboard />} />
             <Route path="/sr-staff/transfers" element={<TransfersList />} />
@@ -56,7 +53,7 @@ function App() {
           </Route>
         </Route>
 
-        <Route element={<StaffProtectedRoute />}>
+        <Route element={<CommonProtectedRoute Role={"STAFF"} />}>
           <Route element={<StaffLayout />}>
             <Route path="/staff-dashboard" element={<StaffDashboard />} />
 
