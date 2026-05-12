@@ -1,8 +1,8 @@
-import React, { useEffect, useMemo, useState } from "react";
-import ExportHtmlButton from "@/components/SrStaff/component/exportHtmlButton";
-import { buildTransfersExportHtml } from "@/components/SrStaff/component/exportTransfer";
+import React, { useEffect, useState } from "react";
 
-import TransferReviewModal from "@/components/SrStaff/TransferModal";
+import TransferTableSection, {
+  Transfer,
+} from "@/components/SrStaff/component/TransferTable";
 
 import {
   getTransfers,
@@ -12,32 +12,11 @@ import {
   approveTransfer,
   rejectTransfer,
 } from "@/services/srStaffTransfer.service";
-
-type Transfer = {
-  id: number;
-  patientName: string;
-  patientMrn: string;
-  fromWard: string;
-  fromBed: string;
-  toWard: string;
-  toBed: string;
-  requestedBy: string;
-  requestedAt: string;
-  status: string;
-};
-
+import { toast } from "react-toastify";
 export default function TransferRequestsPage() {
   const [activeTab, setActiveTab] = useState("All");
-  const [searchTerm, setSearchTerm] = useState("");
   const [transfers, setTransfers] = useState<Transfer[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const [selectedTransfer, setSelectedTransfer] = useState<Transfer | null>(
-    null,
-  );
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
   const normalizeTransfer = (item: any): Transfer => {
     const patientName =
       item.patientName ||
@@ -89,7 +68,8 @@ export default function TransferRequestsPage() {
 
       setTransfers(data.map(normalizeTransfer));
     } catch (error) {
-      console.error("Failed to fetch transfers", error);
+      console.error("Failed to fetch transfer requests", error);
+      toast.error("Failed to fetch transfer requests");
     } finally {
       setLoading(false);
     }
@@ -99,34 +79,17 @@ export default function TransferRequestsPage() {
     fetchTransfers();
   }, [activeTab]);
 
-  const filteredTransfers = useMemo(() => {
-    let filtered = transfers;
-
-    if (searchTerm) {
-      const lower = searchTerm.toLowerCase();
-
-      filtered = filtered.filter(
-        (t) =>
-          t.patientName.toLowerCase().includes(lower) ||
-          t.patientMrn.toLowerCase().includes(lower) ||
-          t.fromWard.toLowerCase().includes(lower) ||
-          t.toWard.toLowerCase().includes(lower),
-      );
-    }
-
-    return filtered;
-  }, [searchTerm, transfers]);
-
   const handleReject = async (id: number) => {
     try {
       await rejectTransfer(id);
 
-      setIsModalOpen(false);
-      setSelectedTransfer(null);
+      toast.success("Transfer rejected successfully");
 
       fetchTransfers();
     } catch (error) {
       console.error(error);
+      toast.error("Failed to reject transfer");
+      throw error;
     }
   };
 
@@ -134,53 +97,13 @@ export default function TransferRequestsPage() {
     try {
       await approveTransfer(id);
 
-      setIsModalOpen(false);
-      setSelectedTransfer(null);
+      toast.success("Transfer approved successfully");
 
       fetchTransfers();
     } catch (error) {
       console.error(error);
-    }
-  };
-
-  const getStatusStyle = (status: string) => {
-    switch (status) {
-      case "PENDING":
-        return "bg-blue-50 text-blue-600";
-
-      case "APPROVED":
-        return "bg-orange-50 text-orange-600";
-
-      case "COMPLETED":
-        return "bg-green-50 text-green-600";
-
-      case "REJECTED":
-        return "bg-red-50 text-red-600";
-
-      case "CANCELLED":
-        return "bg-gray-100 text-gray-500";
-
-      default:
-        return "bg-gray-100 text-gray-500";
-    }
-  };
-
-  const getDotColor = (status: string) => {
-    switch (status) {
-      case "PENDING":
-        return "bg-blue-600";
-
-      case "APPROVED":
-        return "bg-orange-600";
-
-      case "COMPLETED":
-        return "bg-green-600";
-
-      case "REJECTED":
-        return "bg-red-600";
-
-      default:
-        return "bg-gray-500";
+      toast.error("Bed already occupied, please reject the request");
+      throw error;
     }
   };
 
@@ -204,232 +127,12 @@ export default function TransferRequestsPage() {
             Transfer Requests
           </h1>
         </div>
-
-        <div className="flex gap-4">
-          <ExportHtmlButton
-            label="Export TXT"
-            fileName="inter-ward-transfers.txt"
-            getHtml={() => buildTransfersExportHtml(filteredTransfers)}
-          />
-        </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-6">
-        <div className="flex justify-between items-end p-6 border-b border-gray-100">
-          <div className="flex gap-8">
-            <div>
-              <p className="text-xs text-gray-500 font-semibold mb-2">
-                STATUS FILTER
-              </p>
-
-              <div className="flex bg-gray-50 p-1 rounded-md border border-gray-200">
-                {["All", "Pending", "Completed", "Cancelled"].map((tab) => (
-                  <button
-                    key={tab}
-                    onClick={() => setActiveTab(tab)}
-                    className={
-                      "px-4 py-1.5 text-sm rounded-sm transition-colors " +
-                      (activeTab === tab
-                        ? "bg-white shadow-sm font-medium text-gray-800"
-                        : "text-gray-500 hover:text-gray-700")
-                    }
-                  >
-                    {tab}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <p className="text-xs text-gray-500 font-semibold mb-2">
-                DATE RANGE
-              </p>
-
-              <select className="border border-gray-200 px-4 py-1.5 rounded-md text-sm font-medium bg-white text-gray-700 h-[34px] w-[200px]">
-                <option>Last 7 Days</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search Requests..."
-              className="pl-8 pr-4 py-1.5 border border-gray-200 rounded-md text-sm w-[250px]"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-
-            <svg
-              className="absolute left-2.5 top-2 w-4 h-4 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              ></path>
-            </svg>
-          </div>
-        </div>
-
-        <table className="w-full text-sm">
-          <thead className="bg-gray-50 text-gray-500 text-xs text-left border-b border-gray-200">
-            <tr>
-              <th className="py-3 px-6 font-semibold">PATIENT NAME</th>
-              <th className="py-3 px-6 font-semibold">FROM WARD/BED</th>
-              <th className="py-3 px-6 font-semibold">TO WARD/BED</th>
-              <th className="py-3 px-6 font-semibold">REQUESTED BY</th>
-              <th className="py-3 px-6 font-semibold">REQUESTED AT</th>
-              <th className="py-3 px-6 font-semibold">STATUS</th>
-              <th className="py-3 px-6 font-semibold text-right">ACTIONS</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {filteredTransfers.map((t) => (
-              <tr
-                key={t.id}
-                className="border-b border-gray-100 hover:bg-gray-50/50"
-              >
-                <td className="py-4 px-6">
-                  <div className="font-bold text-gray-800">{t.patientName}</div>
-
-                  <div className="text-xs text-gray-400">
-                    MRN: {t.patientMrn}
-                  </div>
-                </td>
-
-                <td className="py-4 px-6">
-                  <div className="font-semibold text-gray-700 flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-orange-500"></span>
-                    {t.fromWard}
-                  </div>
-
-                  <div className="text-xs text-gray-500 ml-4">{t.fromBed}</div>
-                </td>
-
-                <td className="py-4 px-6">
-                  <div className="font-semibold text-gray-700 flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-blue-500"></span>
-                    {t.toWard}
-                  </div>
-
-                  <div className="text-xs text-gray-500 ml-4">{t.toBed}</div>
-                </td>
-
-                <td className="py-4 px-6">
-                  <div className="font-medium text-gray-700">
-                    {t.requestedBy}
-                  </div>
-
-                  <div className="text-xs text-gray-400">STAFF</div>
-                </td>
-
-                <td className="py-4 px-6">
-                  <div className="font-medium text-gray-800">
-                    {new Date(t.requestedAt).toLocaleTimeString()}
-                  </div>
-
-                  <div className="text-xs text-gray-400">
-                    {new Date(t.requestedAt).toLocaleDateString()}
-                  </div>
-                </td>
-
-                <td className="py-4 px-6 font-bold">
-                  <span
-                    className={`px-2 py-1 rounded-sm text-xs flex items-center gap-1 w-max ${getStatusStyle(
-                      t.status,
-                    )}`}
-                  >
-                    <span
-                      className={`w-1.5 h-1.5 rounded-full ${getDotColor(
-                        t.status,
-                      )}`}
-                    ></span>
-
-                    {t.status}
-                  </span>
-                </td>
-
-                <td className="py-4 px-6 text-right">
-                  {t.status === "PENDING" ? (
-                    <button
-                      onClick={() => {
-                        setSelectedTransfer(t);
-                        setIsModalOpen(true);
-                      }}
-                      className="px-3 py-1.5 bg-[#1E40AF] text-white rounded text-xs font-semibold hover:bg-blue-800 transition-colors"
-                    >
-                      Review Request
-                    </button>
-                  ) : (
-                    <button
-                      disabled
-                      className="p-1.5 text-gray-300 cursor-not-allowed"
-                    >
-                      <svg
-                        className="w-5 h-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                        ></path>
-
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                        ></path>
-                      </svg>
-                    </button>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-
-        <div className="p-4 border-t border-gray-100 text-xs text-gray-400 flex justify-between items-center">
-          <span>Showing {filteredTransfers.length} transfer requests</span>
-
-          <div className="flex gap-1">
-            <button className="w-6 h-6 rounded flex items-center justify-center border border-gray-200 text-gray-400">
-              &lt;
-            </button>
-
-            <button className="w-6 h-6 rounded flex items-center justify-center bg-blue-50 text-blue-600 font-medium border border-blue-100">
-              1
-            </button>
-
-            <button className="w-6 h-6 rounded flex items-center justify-center hover:bg-gray-50 text-gray-600">
-              2
-            </button>
-
-            <button className="w-6 h-6 rounded flex items-center justify-center hover:bg-gray-50 text-gray-600">
-              3
-            </button>
-
-            <button className="w-6 h-6 rounded flex items-center justify-center border border-gray-200 text-gray-600">
-              &gt;
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <TransferReviewModal
-        open={isModalOpen}
-        transfer={selectedTransfer}
-        onOpenChange={setIsModalOpen}
+      <TransferTableSection
+        transfers={transfers}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
         onApprove={handleApprove}
         onReject={handleReject}
       />
