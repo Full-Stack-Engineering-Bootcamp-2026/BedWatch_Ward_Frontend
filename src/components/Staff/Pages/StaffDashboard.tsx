@@ -1,17 +1,10 @@
 import { useEffect, useState, useCallback } from "react";
-
 import { useSelector } from "react-redux";
-
 import { RootState } from "@/store/store";
-
 import SummaryCards from "../components/SummaryCards";
-
 import BedGrid from "../components/BedGrid";
-
 import { GoDownload } from "react-icons/go";
-
 import axios from "axios";
-
 import { useNavigate } from "react-router-dom";
 
 export default function StaffDashboard() {
@@ -32,13 +25,7 @@ export default function StaffDashboard() {
         },
       },
     );
-    console.log(
-  JSON.stringify(
-    response.data,
-    null,
-    2,
-  ),
-);
+    console.log(JSON.stringify(response.data, null, 2));
     return response.data;
   }, [token]);
 

@@ -36,7 +36,7 @@ export default function BedCard({ bed }: Props) {
     let timeLeft = 3000;
 
     const interval = setInterval(() => {
-      timeLeft -= 1;  
+      timeLeft -= 1;
 
       setCountdown(timeLeft);
 

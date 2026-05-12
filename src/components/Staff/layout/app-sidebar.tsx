@@ -110,7 +110,6 @@ export default function AppSidebar({ open, setOpen }: SidebarProps) {
                             <span>{item.name}</span>
                           </button>
 
-                    
                           <TransferPatientDialog
                             open={transferOpen}
                             onOpenChange={setTransferOpen}

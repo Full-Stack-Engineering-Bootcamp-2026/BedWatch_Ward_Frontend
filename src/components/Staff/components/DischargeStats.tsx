@@ -18,13 +18,9 @@ export default function DischargeStats() {
           </p>
 
           <div className="flex items-end gap-2 mt-1">
-            <h2 className="text-3xl font-bold text-slate-900">
-              42
-            </h2>
+            <h2 className="text-3xl font-bold text-slate-900">42</h2>
 
-            <span className="text-sm text-green-600 font-medium">
-              +12%
-            </span>
+            <span className="text-sm text-green-600 font-medium">+12%</span>
           </div>
         </div>
       </div>
@@ -40,13 +36,9 @@ export default function DischargeStats() {
           </p>
 
           <div className="flex items-end gap-2 mt-1">
-            <h2 className="text-3xl font-bold text-slate-900">
-              18m
-            </h2>
+            <h2 className="text-3xl font-bold text-slate-900">18m</h2>
 
-            <span className="text-sm text-yellow-600 font-medium">
-              -2m
-            </span>
+            <span className="text-sm text-yellow-600 font-medium">-2m</span>
           </div>
         </div>
       </div>
@@ -61,11 +53,9 @@ export default function DischargeStats() {
             Beds Pending Cleaning
           </p>
 
-          <h2 className="text-3xl font-bold text-slate-900 mt-1">
-            14
-          </h2>
+          <h2 className="text-3xl font-bold text-slate-900 mt-1">14</h2>
         </div>
       </div>
     </div>
   );
-}   
+}
