@@ -9,7 +9,7 @@ import { logout } from "@/store/slices/authSlice";
 import { LogOut, KeyRound } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import axios from "axios"; 
+import axios from "axios";
 
 import {
   Dialog,
@@ -129,30 +129,6 @@ export default function StaffProfile() {
       toast.error(
         error?.response?.data?.message || "Failed to upload profile image",
       );
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  const handleChangePassword = async () => {
-    try {
-      if (!authUser?.id) {
-        toast.error("User not found");
-
-        return;
-      }
-
-      if (!formData.oldPassword || !formData.newPassword) {
-        toast.error("Please enter old and new password");
-
-        profileImage: imageUrl,
-      }));
-
-      toast.success("Profile image uploaded successfully");
-    } catch (error: any) {
-      console.error("Upload failed", error);
-
-      toast.error(error?.response?.data?.message || "Failed to upload image");
     } finally {
       setUploading(false);
     }
