@@ -100,7 +100,7 @@ export default function TransfersList() {
         data = await getTransfers();
       } else if (activeTab === "Pending") {
         data = await getPendingTransfers();
-      } else if (activeTab === "Approved") {
+      } else if (activeTab === "Completed") {
         data = await getCompletedTransfers();
       } else if (activeTab === "Cancelled") {
         data = await getRejectedTransfers();

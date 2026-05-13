@@ -47,6 +47,8 @@ export const approveTransfer = async (id: number) => {
     {},
     getAuthHeader(),
   );
+  console.log(response.data);
+
   return response.data.data;
 };
 export const rejectTransfer = async (id: number) => {

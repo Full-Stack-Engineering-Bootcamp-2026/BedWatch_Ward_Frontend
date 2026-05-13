@@ -62,7 +62,7 @@ export default function Navbar({ setOpen }: NavbarProps) {
 
         <NavLink to="/staff/profile">
           <Avatar className="w-8 h-8 cursor-pointer border hover:scale-105 transition-all">
-            <AvatarImage src="https://i.pravatar.cc/" />
+            <AvatarImage src={user?.imageUrl} />
 
             <AvatarFallback>Staff</AvatarFallback>
           </Avatar>
