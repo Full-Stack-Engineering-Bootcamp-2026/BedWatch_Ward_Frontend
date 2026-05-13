@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react";
-
 import axios from "axios";
-
 import { useSelector } from "react-redux";
-
 import type { RootState } from "@/store/store";
 import { toast } from "react-toastify";
 import { ToastContainer } from "react-toastify";
@@ -175,10 +172,8 @@ export default function TransferPatientDialog({
       console.log("TRANSFER ERROR:", error.response?.data);
 
       toast.error(
-  error.response?.data?.message ||
-    "Failed to submit transfer request",
-);
-   
+        error.response?.data?.message || "Failed to submit transfer request",
+      );
     } finally {
       setLoading(false);
     }
@@ -204,11 +199,8 @@ export default function TransferPatientDialog({
           </div>
         </DialogHeader>
 
-    
         <div className="p-8 space-y-6 bg-white">
-       
           <div className="grid grid-cols-2 gap-5">
-     
             <div className="border border-slate-200 rounded-2xl p-5 bg-slate-50">
               <p className="text-xs uppercase tracking-wide text-slate-400 font-semibold mb-3">
                 Current Ward
@@ -227,7 +219,6 @@ export default function TransferPatientDialog({
               </div>
             </div>
 
-          
             <div className="border border-slate-200 rounded-2xl p-5 bg-slate-50">
               <p className="text-xs uppercase tracking-wide text-slate-400 font-semibold mb-3">
                 Current Bed
@@ -247,7 +238,6 @@ export default function TransferPatientDialog({
             </div>
           </div>
 
-     
           <div className="space-y-3">
             <label className="text-xs uppercase tracking-wide text-slate-500 font-semibold">
               Destination Ward
@@ -282,7 +272,6 @@ export default function TransferPatientDialog({
             </div>
           </div>
 
-     
           <div className="space-y-3">
             <label className="text-xs uppercase tracking-wide text-slate-500 font-semibold">
               Available Beds

@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
-
 import { PiNotepadLight } from "react-icons/pi";
-
 import PatientDetailDialog from "./PatientDetailDialog";
 
 interface Props {
@@ -36,7 +34,7 @@ export default function BedCard({ bed }: Props) {
     let timeLeft = 3000;
 
     const interval = setInterval(() => {
-      timeLeft -= 1;  
+      timeLeft -= 1;
 
       setCountdown(timeLeft);
 

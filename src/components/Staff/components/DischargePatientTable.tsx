@@ -4,10 +4,8 @@ import {
 } from "@/components/ui/card";
 
 import { Button } from "@/components/ui/button";
-
 import { Badge } from "@/components/ui/badge";
-
-import type { Bed } from "../pages/DischargePatientsPage";
+import { Bed } from "../Pages/DischargePatient";
 
 type Props = {
   beds: Bed[];

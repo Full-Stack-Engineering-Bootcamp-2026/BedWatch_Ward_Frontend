@@ -62,9 +62,7 @@ export default function Navbar({ setOpen }: NavbarProps) {
 
         <NavLink to="/staff/profile">
           <Avatar className="w-8 h-8 cursor-pointer border hover:scale-105 transition-all">
-            <AvatarImage src={user?.imageUrl ||
-
-            "https://upload.wikimedia.org/wikipedia/en/b/bd/Doraemon_character.png"}/>
+            <AvatarImage src="https://i.pravatar.cc/" />
 
             <AvatarFallback>Staff</AvatarFallback>
           </Avatar>

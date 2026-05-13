@@ -9,23 +9,15 @@ type SummaryCardsProps = {
   beds: Bed[];
 };
 
-export default function SummaryCards({
-  beds,
-}: SummaryCardsProps) {
+export default function SummaryCards({ beds }: SummaryCardsProps) {
   const summary = {
     totalBeds: beds.length,
 
-    availableBeds: beds.filter(
-      (bed) => bed.status === "AVAILABLE"
-    ).length,
+    availableBeds: beds.filter((bed) => bed.status === "AVAILABLE").length,
 
-    occupiedBeds: beds.filter(
-      (bed) => bed.status === "OCCUPIED"
-    ).length,
+    occupiedBeds: beds.filter((bed) => bed.status === "OCCUPIED").length,
 
-    cleaningBeds: beds.filter(
-      (bed) => bed.status === "CLEANING"
-    ).length,
+    cleaningBeds: beds.filter((bed) => bed.status === "CLEANING").length,
   };
 
   const cards = [
@@ -54,10 +46,7 @@ export default function SummaryCards({
   return (
     <div className="bg-white grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
       {cards.map((item) => (
-        <Card
-          key={item.title}
-          className={`border-l-4 ${item.color}`}
-        >
+        <Card key={item.title} className={`border-l-4 ${item.color}`}>
           <CardContent className="p-5 bg-white">
             <p className="text-xs text-slate-500 font-semibold tracking-wide">
               {item.title}

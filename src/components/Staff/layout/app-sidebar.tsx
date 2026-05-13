@@ -1,7 +1,5 @@
 import { useState } from "react";
-
 import { cn } from "@/lib/utils";
-
 import { Button } from "@/components/ui/button";
 
 import {
@@ -110,7 +108,6 @@ export default function AppSidebar({ open, setOpen }: SidebarProps) {
                             <span>{item.name}</span>
                           </button>
 
-                    
                           <TransferPatientDialog
                             open={transferOpen}
                             onOpenChange={setTransferOpen}

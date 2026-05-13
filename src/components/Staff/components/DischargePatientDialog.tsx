@@ -7,9 +7,7 @@ import {
 } from "@/components/ui/dialog";
 
 import { Textarea } from "@/components/ui/textarea";
-
 import { Button } from "@/components/ui/button";
-
 import { AlertTriangle } from "lucide-react";
 
 type DischargeDialogProps = {
@@ -23,29 +21,21 @@ export default function DischargeDialog({
   onOpenChange,
 }: DischargeDialogProps) {
   return (
-    <Dialog
-      open={open}
-      onOpenChange={onOpenChange}
-    >
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[560px] bg-white p-0 rounded-2xl overflow-hidden border border-slate-200 shadow-2xl">
         <div className="bg-white">
-   
           <DialogHeader className="px-6 pt-6 pb-5 border-b bg-white text-left">
             <DialogTitle className="text-[36px] leading-[42px] font-bold text-[#1E1E1E]">
               Discharge Robert Henderson?
             </DialogTitle>
 
             <DialogDescription className="text-[15px] text-[#5F5F5F] mt-2">
-              Confirm final discharge sequence and bed
-              release.
+              Confirm final discharge sequence and bed release.
             </DialogDescription>
           </DialogHeader>
 
-     
           <div className="px-6 py-5 space-y-6 bg-white">
-        
             <div className="grid grid-cols-2 gap-6 bg-[#F7F5FC] border border-[#ECE8F5] rounded-2xl p-6">
-   
               <div className="space-y-6">
                 <div>
                   <p className="text-[11px] uppercase tracking-[1.5px] text-[#8C8C8C] font-medium">
@@ -109,19 +99,18 @@ export default function DischargeDialog({
 
               <div>
                 <h4 className="font-semibold text-[#B54708] text-[15px]">
-                  Bed 12 will be marked as Cleaning after
-                  discharge.
+                  Bed 12 will be marked as Cleaning after discharge.
                 </h4>
 
                 <p className="text-[14px] text-[#B54708]/80 mt-2 leading-6">
-                  This will automatically trigger a service
-                  request for Environmental Services.
+                  This will automatically trigger a service request for
+                  Environmental Services.
                 </p>
               </div>
             </div>
           </div>
 
-          {/* Footer */}
+       
           <div className="border-t bg-white px-6 py-4 flex items-center justify-end gap-3">
             <Button
               variant="ghost"
