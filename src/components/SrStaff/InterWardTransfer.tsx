@@ -3,6 +3,10 @@ import TransferReviewModal from "@/components/SrStaff/TransferModal";
 import ExportHtmlButton from "@/components/SrStaff/component/exportHtmlButton";
 import { buildTransfersExportHtml } from "@/components/SrStaff/component/exportTransfer";
 import {
+  requestBrowserNotificationPermission,
+  showBrowserNotification,
+} from "@/lib/SrStaffBrowserNotification";
+import {
   getTransfers,
   getPendingTransfers,
   getCompletedTransfers,
@@ -158,6 +162,14 @@ export default function TransfersList() {
   const handleReject = async (id: number) => {
     try {
       await rejectTransfer(id);
+      const transferDetails = selectedTransfer;
+      if (transferDetails) {
+        await showBrowserNotification({
+          title: "Transfer Request Rejected",
+          body: `Request rejected from ${transferDetails.fromWard} / ${transferDetails.fromBed} to ${transferDetails.toWard} / ${transferDetails.toBed}`,
+          tag: `transfer-rejected-${transferDetails.id}`,
+        });
+      }
 
       setIsModalOpen(false);
       setSelectedTransfer(null);
@@ -171,6 +183,14 @@ export default function TransfersList() {
   const handleApprove = async (id: number) => {
     try {
       await approveTransfer(id);
+      const transferDetails = selectedTransfer;
+      if (transferDetails) {
+        await showBrowserNotification({
+          title: "Transfer Request Approved",
+          body: `Request approved from ${transferDetails.fromWard} / ${transferDetails.fromBed} to ${transferDetails.toWard} / ${transferDetails.toBed}`,
+          tag: `transfer-approved-${transferDetails.id}`,
+        });
+      }
 
       setIsModalOpen(false);
       setSelectedTransfer(null);
@@ -248,6 +268,12 @@ export default function TransfersList() {
             fileName="inter-ward-transfers.txt"
             getHtml={() => buildTransfersExportHtml(filteredTransfers)}
           />
+          <button
+            onClick={requestBrowserNotificationPermission}
+            className="px-3 py-1.5 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-300 transition-colors"
+          >
+            Enable Notifications
+          </button>
         </div>
       </div>
 
