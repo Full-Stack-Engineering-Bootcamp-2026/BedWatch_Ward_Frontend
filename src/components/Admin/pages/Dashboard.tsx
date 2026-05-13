@@ -82,7 +82,7 @@ function Dashboard() {
   }, []);
 
   return (
-    <div className="w-full bg-[#FBF8FF] overflow-hidden">
+    <div className="w-full mb-16 bg-[#FBF8FF] overflow-hidden">
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Hospital Overview</h1>
 

@@ -5,9 +5,12 @@ import { MdOutlineBed } from "react-icons/md";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import { NavLink } from "react-router-dom";
+import { useSelector } from "react-redux";
 type NavbarProps = { setOpen: React.Dispatch<React.SetStateAction<boolean>> };
 
 export default function Navbar({ setOpen }: NavbarProps) {
+  const { user } = useSelector((state: any) => state.auth);
+
   return (
     <header className="w-full h-[61px] border-b bg-white flex items-center justify-between px-6">
       <div className="flex items-center gap-3">
@@ -42,29 +45,30 @@ export default function Navbar({ setOpen }: NavbarProps) {
         <span className="font-inter cursor-pointer hover:text-black">
           Resource Map
         </span>
-       <NavLink to="/reports" className={({ isActive }) => `font-inter cursor-pointer hover:text-black ${
-      isActive
-        ? "text-[#00288E] font-semibold"
-        : ""
-    }`
-  }
->
-  Reports
-</NavLink>
+        <NavLink
+          to="/reports"
+          className={({ isActive }) =>
+            `font-inter cursor-pointer hover:text-black ${
+              isActive ? "text-[#00288E] font-semibold" : ""
+            }`
+          }
+        >
+          Reports
+        </NavLink>
       </nav>
 
       <div className="flex items-center gap-4">
         <HelpCircle className="w-5 h-5 text-gray-500 cursor-pointer" />
 
-      <NavLink to="/staff/profile">
-  <Avatar className="w-8 h-8 cursor-pointer border hover:scale-105 transition-all">
-    <AvatarImage src="https://i.pravatar.cc/" />
+        <NavLink to="/staff/profile">
+          <Avatar className="w-8 h-8 cursor-pointer border hover:scale-105 transition-all">
+            <AvatarImage src={user?.imageUrl ||
 
-    <AvatarFallback>
-      Staff
-    </AvatarFallback>
-  </Avatar>
-</NavLink>
+            "https://upload.wikimedia.org/wikipedia/en/b/bd/Doraemon_character.png"}/>
+
+            <AvatarFallback>Staff</AvatarFallback>
+          </Avatar>
+        </NavLink>
       </div>
     </header>
   );

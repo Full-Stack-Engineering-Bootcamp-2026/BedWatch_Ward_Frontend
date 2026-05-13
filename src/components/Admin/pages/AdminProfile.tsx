@@ -31,9 +31,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { logout } from "@/store/slices/authSlice";
+import { login, logout } from "@/store/slices/authSlice";
 
 function AdminProfile() {
+  const [uploading, setUploading] = useState(false);
+
   const { user, token } = useSelector((state: any) => state.auth);
 
   const dispatch = useDispatch();
@@ -49,6 +51,47 @@ function AdminProfile() {
     dispatch(logout());
 
     navigate("/");
+  };
+  const uploadProfileImage = async (file: File) => {
+    try {
+      setUploading(true);
+
+      const formData = new FormData();
+
+      formData.append("image", file);
+
+      const response = await axios.post(
+        "http://localhost:3000/api/v1/users/upload-profile",
+
+        formData,
+
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      const imageUrl = response.data.data.imageUrl;
+
+      dispatch(
+        login({
+          token: token!,
+          user: {
+            ...user,
+            imageUrl,
+          },
+        }),
+      );
+
+      toast.success("Profile image uploaded successfully");
+    } catch (error: any) {
+      console.log(error);
+
+      toast.error(error?.response?.data?.message || "Failed to upload image");
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -112,13 +155,64 @@ function AdminProfile() {
             <CardContent className="p-6 text-center">
               <div className="relative w-24 h-24 mx-auto mb-4">
                 <img
-                  src="https://png.pngtree.com/background/20250106/original/pngtree-a-hackers-use-computer-picture-image_15824759.jpg"
-                  className="w-24 h-24 rounded-xl border object-cover"
+                  src={
+                    user?.imageUrl ||
+                    "https://png.pngtree.com/background/20250106/original/pngtree-a-hackers-use-computer-picture-image_15824759.jpg"
+                  }
+                  className="w-28 h-28 rounded-full p-1 border object-cover"
+                />
+                <input
+                  type="file"
+                  id="profile-upload"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(event) => {
+                    const file = event.target.files?.[0];
+
+                    if (file) {
+                      uploadProfileImage(file);
+                    }
+                  }}
                 />
 
-                <div className="absolute bottom-0 right-0 w-7 h-7 bg-[#1E40AF] rounded-md flex items-center justify-center text-white">
-                  <ShieldCheck size={14} />
-                </div>
+                <label htmlFor="profile-upload">
+                  <div className="absolute bottom-0 right-0 w-8 h-8 bg-[#1E40AF] hover:bg-[#18379c] text-white rounded-md text-xs flex items-center justify-center cursor-pointer">
+                    {uploading ? "..." : "+"}
+                  </div>
+                </label>
+
+                <label
+                  htmlFor="admin-profile-upload"
+                  className="absolute bottom-0 right-0 w-7 h-7 bg-[#1E40AF] rounded-md flex items-center justify-center text-white cursor-pointer"
+                >
+                  {uploading ? "..." : <ShieldCheck size={14} />}
+                </label>
+              </div>
+
+              <div className="mt-6">
+                <input
+                  type="file"
+                  accept="image/*"
+                  id="profile-upload"
+                  className="hidden"
+                  onChange={(event) => {
+                    const file = event.target.files?.[0];
+
+                    if (file) {
+                      uploadProfileImage(file);
+                    }
+                  }}
+                />
+
+                <label htmlFor="profile-upload">
+                  <Button
+                    asChild
+                    disabled={uploading}
+                    className="w-28 bg-[#1E40AF] hover:bg-blue-800 text-white cursor-pointer"
+                  >
+                    <span>{uploading ? "Uploading..." : "Upload Image"}</span>
+                  </Button>
+                </label>
               </div>
 
               <h2 className="text-2xl font-bold text-gray-900">

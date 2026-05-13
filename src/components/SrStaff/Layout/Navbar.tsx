@@ -7,12 +7,18 @@ import { Button } from "@/components/ui/button";
 import { HelpCircle, Menu } from "lucide-react";
 import { MdOutlineBed } from "react-icons/md";
 import { NavLink } from "react-router-dom";
+import { useSelector } from "react-redux";
+
 import AboutSrStaffModal from "@/components/SrStaff/component/AboutSrStaff";
 
-type NavbarProps = { setOpen: React.Dispatch<React.SetStateAction<boolean>> };
+type NavbarProps = {
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+};
 
 export default function Navbar({ setOpen }: NavbarProps) {
   const [aboutOpen, setAboutOpen] = useState(false);
+
+  const { user } = useSelector((state: any) => state.auth);
 
   return (
     <header className="sticky top-0 z-[40] min-h-[60px] border-b bg-white flex items-center justify-between px-4 md:px-6 py-3">
@@ -52,9 +58,15 @@ export default function Navbar({ setOpen }: NavbarProps) {
         />
 
         <NavLink to="/sr-staff/profile">
-          <Avatar className="w-8 h-8 md:w-9 md:h-9 cursor-pointer">
-            <AvatarImage src="https://api.dicebear.com/7.x/adventurer/svg?seed=senior-staff" />
-            <AvatarFallback>U</AvatarFallback>
+          <Avatar className="w-8 h-8 md:w-9 md:h-9 cursor-pointer border hover:scale-105 transition-all">
+            <AvatarImage
+              src={
+                user?.imageUrl ||
+                "https://api.dicebear.com/7.x/adventurer/svg?seed=senior-staff"
+              }
+            />
+
+            <AvatarFallback>SS</AvatarFallback>
           </Avatar>
         </NavLink>
 
