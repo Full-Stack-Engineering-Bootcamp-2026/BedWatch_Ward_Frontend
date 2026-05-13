@@ -129,7 +129,7 @@ function StatsCards() {
 
 export default function OperationalReports() {
   return (
-    <div className="min-h-screen bg-[#f8f8fc] p-4 md:p-2">
+    <div className="min-h-screen bg-[#f8f8fc] p-4 md:p-2 mb-16">
       <div className="mx-auto max-w-7xl space-y-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>

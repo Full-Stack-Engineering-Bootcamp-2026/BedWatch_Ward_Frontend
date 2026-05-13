@@ -47,7 +47,6 @@ function StaffLayout() {
 
   return (
     <SidebarProvider className="bg-[#f4f1f8]">
-      
       <div className="flex flex-col h-screen w-full ">
         <div className="sticky top-0 z-50">
           <Navbar setOpen={setOpen} />{" "}
@@ -57,13 +56,12 @@ function StaffLayout() {
           <AppSidebar open={open} setOpen={setOpen} />
 
           <div className="flex flex-col flex-1 overflow-hidden">
-  
-  <main className="flex-1 overflow-y-auto overflow-x-hidden bg-gray-50 px-6">
-    <Outlet />
-  </main>
+            <main className="flex-1 overflow-y-auto overflow-x-hidden bg-gray-50 px-6">
+              <Outlet />
+            </main>
 
-  <Footer />
-</div>
+            <Footer />
+          </div>
         </div>
       </div>
     </SidebarProvider>

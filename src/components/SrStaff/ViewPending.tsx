@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
-
-import { Button } from "@/components/ui/button";
-import { FaFileExport } from "react-icons/fa";
+import ExportHtmlButton from "@/components/SrStaff/component/exportHtmlButton";
+import { buildTransfersExportHtml } from "@/components/SrStaff/component/exportTransfer";
 
 import TransferReviewModal from "@/components/SrStaff/TransferModal";
 
@@ -13,7 +12,6 @@ import {
   approveTransfer,
   rejectTransfer,
 } from "@/services/srStaffTransfer.service";
-import { toast } from "react-toastify";
 
 type Transfer = {
   id: number;
@@ -141,13 +139,6 @@ export default function TransferRequestsPage() {
 
       fetchTransfers();
     } catch (error) {
-      const message = error?.response?.data?.message;
-
-      if (message === "Active admission not found") {
-        toast.error("No active admission exists for this patient");
-      } else {
-        toast.error("Bed already occupied, please reject the request");
-      }
       console.error(error);
     }
   };
@@ -215,13 +206,11 @@ export default function TransferRequestsPage() {
         </div>
 
         <div className="flex gap-4">
-          <Button
-            variant="outline"
-            className="flex items-center gap-2 border-gray-300 text-gray-700"
-          >
-            <FaFileExport />
-            Export CSV
-          </Button>
+          <ExportHtmlButton
+            label="Export TXT"
+            fileName="inter-ward-transfers.txt"
+            getHtml={() => buildTransfersExportHtml(filteredTransfers)}
+          />
         </div>
       </div>
 

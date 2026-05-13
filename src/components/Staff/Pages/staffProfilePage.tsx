@@ -1,4 +1,5 @@
 import React, { useEffect, useState, type ChangeEvent } from "react";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,7 +9,7 @@ import { logout } from "@/store/slices/authSlice";
 import { LogOut, KeyRound } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import axios from "axios"; 
+import axios from "axios";
 
 import {
   Dialog,
@@ -19,6 +20,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+
+import { login } from "@/store/slices/authSlice";
 
 type Ward = {
   id: number;
@@ -39,7 +42,7 @@ type ProfileUser = {
 
   role: string;
 
-  profileImage?: string;
+  imageUrl?: string;
 
   ward: Ward | null;
 
@@ -106,14 +109,26 @@ export default function StaffProfile() {
       setProfileUser((prev: any) => ({
         ...prev,
 
-        profileImage: imageUrl,
+        imageUrl: imageUrl,
       }));
+
+      dispatch(
+        login({
+          token: token!,
+          user: {
+            ...authUser,
+            imageUrl: imageUrl,
+          },
+        }),
+      );
 
       toast.success("Profile image uploaded successfully");
     } catch (error: any) {
-      console.error("Upload failed", error);
+      console.log(error);
 
-      toast.error(error?.response?.data?.message || "Failed to upload image");
+      toast.error(
+        error?.response?.data?.message || "Failed to upload profile image",
+      );
     } finally {
       setUploading(false);
     }
@@ -233,15 +248,30 @@ export default function StaffProfile() {
           <div className="bg-white border border-gray-200 rounded-xl p-6 text-center shadow-sm">
             <div className="relative w-24 h-24 mx-auto mb-4">
               <img
-                src="https://upload.wikimedia.org/wikipedia/en/b/bd/Doraemon_character.png"
+                src={profileUser?.imageUrl || ""}
                 alt="Profile"
                 className="w-24 h-24 rounded-xl border-2 border-blue-100 object-cover shadow-sm"
               />
 
-              <button
-                type="button"
-                className="absolute bottom-0 right-0 w-7 h-7 bg-[#1E40AF] text-white rounded-md text-xs"
+              <input
+                type="file"
+                id="profile-upload"
+                accept="image/*"
+                className="hidden"
+                onChange={(event) => {
+                  const file = event.target.files?.[0];
+
+                  if (file) {
+                    uploadProfileImage(file);
+                  }
+                }}
               />
+
+              <label htmlFor="profile-upload">
+                <div className="absolute bottom-0 right-0 w-8 h-8 bg-[#1E40AF] hover:bg-[#18379c] text-white rounded-md text-xs flex items-center justify-center cursor-pointer">
+                  {uploading ? "..." : "+"}
+                </div>
+              </label>
             </div>
 
             <h2 className="font-bold text-2xl text-gray-900">
