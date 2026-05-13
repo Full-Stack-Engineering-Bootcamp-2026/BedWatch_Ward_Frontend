@@ -5,9 +5,12 @@ import { MdOutlineBed } from "react-icons/md";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import { NavLink } from "react-router-dom";
+import { useSelector } from "react-redux";
 type NavbarProps = { setOpen: React.Dispatch<React.SetStateAction<boolean>> };
 
 export default function Navbar({ setOpen }: NavbarProps) {
+  const { user } = useSelector((state: any) => state.auth);
+
   return (
     <header className="w-full h-[61px] border-b bg-white flex items-center justify-between px-6">
       <div className="flex items-center gap-3">

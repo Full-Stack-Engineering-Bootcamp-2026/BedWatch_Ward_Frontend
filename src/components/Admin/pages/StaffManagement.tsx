@@ -76,6 +76,9 @@ function StaffManagement() {
   useEffect(() => {
     fetchAllStaff();
   }, []);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const itemsPerPage = 5;
 
   const filteredStaff = useMemo(() => {
     return staffData.filter((staff) => {
@@ -88,6 +91,13 @@ function StaffManagement() {
       return matchesSearch && matchesRole;
     });
   }, [staffData, searchTerm, selectedRole]);
+
+  const totalPages = Math.ceil(filteredStaff.length / itemsPerPage);
+
+  const paginatedStaff = filteredStaff.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage,
+  );
 
   return (
     <div className="w-full bg-[#FBF8FF]">
@@ -148,7 +158,7 @@ function StaffManagement() {
                   </td>
                 </tr>
               ) : filteredStaff.length > 0 ? (
-                filteredStaff.map((staff) => (
+                paginatedStaff.map((staff) => (
                   <tr key={staff.id} className="border-b">
                     <td className="py-5">
                       <div className="flex items-center gap-3">
@@ -194,27 +204,51 @@ function StaffManagement() {
 
         <div className="mt-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <p className="text-sm text-gray-500">
-            Showing {filteredStaff.length} staff members
+            Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
+            {Math.min(currentPage * itemsPerPage, filteredStaff.length)} of{" "}
+            {filteredStaff.length} staff members
           </p>
 
           <Pagination className="justify-end">
             <PaginationContent>
               <PaginationItem>
-                <PaginationLink href="#">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  disabled={currentPage === 1}
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
+                >
                   <FaChevronLeft className="h-3 w-3" />
-                </PaginationLink>
+                </Button>
               </PaginationItem>
 
-              <PaginationItem>
-                <PaginationLink href="#" isActive>
-                  1
-                </PaginationLink>
-              </PaginationItem>
+              {Array.from({ length: totalPages }, (_, index) => (
+                <PaginationItem key={index}>
+                  <Button
+                    variant={currentPage === index + 1 ? "default" : "outline"}
+                    onClick={() => setCurrentPage(index + 1)}
+                    className={
+                      currentPage === index + 1 ? "bg-[#1E40AF] text-white" : ""
+                    }
+                  >
+                    {index + 1}
+                  </Button>
+                </PaginationItem>
+              ))}
 
               <PaginationItem>
-                <PaginationLink href="#">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  disabled={currentPage === totalPages}
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                  }
+                >
                   <FaChevronRight className="h-3 w-3" />
-                </PaginationLink>
+                </Button>
               </PaginationItem>
             </PaginationContent>
           </Pagination>

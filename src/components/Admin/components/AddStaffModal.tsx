@@ -23,17 +23,31 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "react-toastify";
 
-const addStaffSchema = z.object({
-  name: z.string().min(3, "Name must be at least 3 characters"),
+const addStaffSchema = z
+  .object({
+    name: z.string().min(3, "Name must be at least 3 characters"),
 
-  email: z.string().email("Invalid email address"),
+    email: z.string().email("Invalid email address"),
 
-  password: z.string().min(6, "Password must be at least 6 characters"),
+    password: z.string().min(6, "Password must be at least 6 characters"),
 
-  role: z.enum(["STAFF", "SENIOR_STAFF"]),
+    role: z.enum(["STAFF", "SENIOR_STAFF"]),
 
-  wardId: z.string().optional(),
-});
+    wardId: z.string().optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.role === "STAFF") {
+        return data.wardId && data.wardId.trim() !== "";
+      }
+
+      return true;
+    },
+    {
+      message: "Ward selection is required for Staff",
+      path: ["wardId"],
+    },
+  );
 
 type AddStaffFormData = z.infer<typeof addStaffSchema>;
 

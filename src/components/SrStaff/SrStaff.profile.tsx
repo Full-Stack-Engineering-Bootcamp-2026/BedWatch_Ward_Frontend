@@ -9,7 +9,7 @@ import { LogOut, KeyRound } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-
+import { login } from "@/store/slices/authSlice";
 import {
   Dialog,
   DialogContent,
@@ -32,12 +32,14 @@ type ProfileUser = {
   name: string;
   email: string;
   role: string;
+  imageUrl?: string;
   ward: Ward | null;
   created_at: string;
   updated_at: string;
 };
 
 export default function SrStaffProfile() {
+  const [uploading, setUploading] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -59,6 +61,53 @@ export default function SrStaffProfile() {
       ...prev,
       [name]: value,
     }));
+  };
+
+  const uploadProfileImage = async (file: File) => {
+    try {
+      setUploading(true);
+
+      const formData = new FormData();
+
+      formData.append("image", file);
+
+      const response = await axios.post(
+        "http://localhost:3000/api/v1/users/upload-profile",
+
+        formData,
+
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      const imageUrl = response.data.data.imageUrl;
+
+      setProfileUser((prev: any) => ({
+        ...prev,
+        imageUrl,
+      }));
+
+      dispatch(
+        login({
+          token: token!,
+          user: {
+            ...authUser,
+            imageUrl,
+          },
+        }),
+      );
+
+      toast.success("Profile image uploaded successfully");
+    } catch (error: any) {
+      console.log(error);
+
+      toast.error(error?.response?.data?.message || "Failed to upload image");
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleChangePassword = async () => {
@@ -162,18 +211,30 @@ export default function SrStaffProfile() {
           <div className="bg-white border border-gray-200 rounded-xl p-6 text-center shadow-sm">
             <div className="relative w-24 h-24 mx-auto mb-4">
               <img
-                src="https://api.dicebear.com/7.x/adventurer/svg?seed=senior-staff"
+                src={
+                  profileUser?.imageUrl ||
+                  "https://api.dicebear.com/7.x/adventurer/svg?seed=senior-staff"
+                }
                 alt="Senior staff profile"
-                className="w-24 h-24 rounded-lg border object-cover"
-              />
-
-              <button
-                type="button"
-                className="absolute bottom-0 right-0 w-7 h-7 bg-[#1E40AF] text-white rounded-md text-xs"
+                className="w-24 h-24 rounded-xl border object-cover"
               />
             </div>
 
-            <h2 className="font-bold text-2xl text-gray-900">
+            <input
+              type="file"
+              id="profile-upload"
+              accept="image/*"
+              className="hidden"
+              onChange={(event) => {
+                const file = event.target.files?.[0];
+
+                if (file) {
+                  uploadProfileImage(file);
+                }
+              }}
+            />
+
+            <h2 className="font-bold text-2xl text-gray-900 mt-4">
               {profileUser?.name ?? "Senior Staff"}
             </h2>
 
@@ -181,9 +242,36 @@ export default function SrStaffProfile() {
               {profileUser?.role ?? "SENIOR_STAFF"}
             </span>
 
-            <Button className="w-full mt-6 bg-[#1E40AF] hover:bg-blue-800 text-white">
-              Upload image
-            </Button>
+            <div className="mt-6">
+              <Button
+                type="button"
+                disabled={uploading}
+                onClick={() => {
+                  const input = document.getElementById(
+                    "profile-upload",
+                  ) as HTMLInputElement;
+
+                  input?.click();
+                }}
+                className="w-full bg-[#1E40AF] hover:bg-blue-800 text-white"
+              >
+                {uploading ? "Uploading..." : "Upload Image"}
+              </Button>
+            </div>
+
+            <input
+              type="file"
+              id="profile-upload"
+              accept="image/*"
+              className="hidden"
+              onChange={(event) => {
+                const file = event.target.files?.[0];
+
+                if (file) {
+                  uploadProfileImage(file);
+                }
+              }}
+            />
 
             <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger asChild>

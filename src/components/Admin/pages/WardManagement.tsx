@@ -155,7 +155,7 @@ function WardManagement() {
     totalCapacity > 0 ? Math.round((totalOccupied / totalCapacity) * 100) : 0;
 
   return (
-    <div className="w-full bg-[#FBF8FF]">
+    <div className="w-full bg-[#FBF8FF] mb-16">
       <div className="mb-6">
         <div className="mt-2 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <h1 className="text-3xl font-bold text-gray-900">

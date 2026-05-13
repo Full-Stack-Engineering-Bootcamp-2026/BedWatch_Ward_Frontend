@@ -1,15 +1,12 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Dashboard from "./components/Admin/pages/Dashboard";
-// import ForgotPassword from "./pages/ResetPassword";
-// import Layout from "./components/layout/Layout";
 import SrStaffDashboard from "./components/SrStaff/DashBoard";
 import TransfersList from "./components/SrStaff/InterWardTransfer";
 import AdminLayout from "./components/Admin/layout/Layout";
 import StaffManagement from "./components/Admin/pages/StaffManagement";
 import WardManagement from "./components/Admin/pages/WardManagement";
 import AdminProfile from "./components/Admin/pages/AdminProfile";
-// import WardControl from "./components/Admin/pages/WardControl";
 import ForgotPasswordEmail from "./pages/ForgotPasswordEmail";
 import ResetPassword from "./pages/ResetPassword";
 import SrStaffRoute from "./components/SrStaff/Layout/Layout";
@@ -23,6 +20,7 @@ import NewAdmissionPage from "./components/Staff/Pages/NewAdmission";
 import DischargePatientsPage from "./components/Staff/Pages/DischargePatient";
 import StaffProfile from "./components/Staff/Pages/staffProfilePage";
 import CommonProtectedRoute from "./components/protected/CommonProtected";
+import ErrorPage from "./pages/ErrorPage";
 
 function App() {
   return (
@@ -70,6 +68,7 @@ function App() {
 
         <Route path="/forgot-password" element={<ForgotPasswordEmail />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="*" element={<ErrorPage />} />
       </Routes>
     </BrowserRouter>
   );

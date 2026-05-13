@@ -4,6 +4,7 @@ type User = {
   id: number;
   email: string;
   role: string;
+  imageUrl:string;
 };
 
 type AuthState = {
